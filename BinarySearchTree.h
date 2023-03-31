@@ -481,8 +481,22 @@ private:
   //          rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
-    assert(true);
-    return node;
+    if (!node) {
+      return true;
+    }
+
+     // Check the sorting invariant for the current node
+    if ((node->left != nullptr && less(node->datum, node->left->datum)) ||
+        (node->right != nullptr && less(node->right->datum, node->datum))) {
+      return false;
+    }
+
+    // Check the sorting invariant for the left and right subtrees recursively
+    bool left_ok = check_sorting_invariant_impl(node->left, less);
+    bool right_ok = check_sorting_invariant_impl(node->right, less);
+
+    // Return true if both subtrees satisfy the sorting invariant
+    return left_ok && right_ok;
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,

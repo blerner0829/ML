@@ -85,12 +85,23 @@ TEST(test_min_max_element_impl_basic) {
     // test min element;
     auto i1 = bst.begin();
     ASSERT_EQUAL(i1, bst.min_element());
-    
+
     // test max element;
     ++i1;
     ++i1;
     ++i1;
     ASSERT_EQUAL(i1, bst.max_element());
 }
+
+TEST(test_check_sorting_invariant_basic) {
+    BinarySearchTree<int> bst;
+    // initialize bst with values [0, 3]
+    for (int i = 0; i < 4; ++i) {
+        bst.insert(i);
+    }
+    ASSERT_TRUE(bst.check_sorting_invariant());
+}
+
+
 
 TEST_MAIN()
