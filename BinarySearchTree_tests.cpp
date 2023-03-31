@@ -47,7 +47,7 @@ TEST(test_destroy_nodes_impl_basic) {
 
 TEST(test_find_impl_basic) {
     BinarySearchTree<int> bst;
-    // initialize bst with values [0, 15]
+    // initialize bst with values [0, 14]
     for (int i = 0; i < 15; ++i) {
         bst.insert(i);
     }
@@ -74,6 +74,23 @@ TEST(test_insert_impl_basic) {
     bst.insert(11);
     ASSERT_EQUAL(3, bst.height());
     ASSERT_EQUAL(7, bst.size());
+}
+
+TEST(test_min_max_element_impl_basic) {
+    BinarySearchTree<int> bst;
+    // initialize bst with values [0, 3]
+    for (int i = 0; i < 4; ++i) {
+        bst.insert(i);
+    }
+    // test min element;
+    auto i1 = bst.begin();
+    ASSERT_EQUAL(i1, bst.min_element());
+    
+    // test max element;
+    ++i1;
+    ++i1;
+    ++i1;
+    ASSERT_EQUAL(i1, bst.max_element());
 }
 
 TEST_MAIN()
