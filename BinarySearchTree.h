@@ -555,22 +555,17 @@ private:
   //       about where the element you're looking for could be.
   static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
     if (!node) {
-      return nullptr;
-    // if current node is less than val, start a recursive branch
-    // for right value to see if theres something even less
-  } else if (less(node->datum, val)) {
-      return min_greater_than_impl(node->right, val, less);
-    // if there isn't something less, the result is 
-  } else {
-      Node *result = min_greater_than_impl(node->left, val, less);
-    if (!result || less(node->datum, result->datum)) {
-      // Either there is no element greater than 'val' in the left subtree,
-      // or the current node's datum is smaller than the smallest element
-      // greater than 'val' found so far.
-      result = node;
+        return nullptr;
     }
-    return result;
-  }
+    if (less(val, node->datum)) {
+        Node* left_result = min_greater_than_impl(node->left, val, less);
+        if (left_result != nullptr) {
+            return left_result;
+        }
+        return node;
+    } else {
+        return min_greater_than_impl(node->right, val, less);
+    }
 }
 
 }; // END of BinarySearchTree class
