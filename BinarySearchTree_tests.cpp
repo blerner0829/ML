@@ -38,12 +38,31 @@ TEST(test_destroy_nodes_impl_basic) {
     }
     BinarySearchTree<int> bst2;
     bst2.insert(100);
-
-  bst2 = bst1;
-
-  ASSERT_EQUAL(15, bst2.size());
-  ASSERT_EQUAL(15, bst2.height());
+    // assignment operator calls the
+    // destroy_nodes_impl() function
+    bst2 = bst1;
+    ASSERT_EQUAL(15, bst2.size());
+    ASSERT_EQUAL(15, bst2.height());
 }
+
+TEST(test_find_impl_basic) {
+    BinarySearchTree<int> bst;
+    // initialize bst with values [0, 15]
+    for (int i = 0; i < 15; ++i) {
+        bst.insert(i);
+    }
+
+    auto i1 = bst.begin();
+    ASSERT_EQUAL(i1, bst.find(0));
+
+    for (int i = 0; i < 15; ++i) {
+        ASSERT_EQUAL(i1, bst.find(i));
+        ++i1;
+    }
+    i1 = bst.end();
+    ASSERT_EQUAL(i1, bst.find(30));
+}
+
 // FIXME:
 // insert doesn't work for BSTs that are not constantly
 // increasing or decreasing
