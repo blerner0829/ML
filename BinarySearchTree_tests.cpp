@@ -102,6 +102,45 @@ TEST(test_check_sorting_invariant_basic) {
     ASSERT_TRUE(bst.check_sorting_invariant());
 }
 
+TEST(test_traverse_order_impl_basic) { 
+    BinarySearchTree<int> bst;
+    bst.insert(10);
+    bst.insert(5);
+    bst.insert(12);
+    bst.insert(3);
+    bst.insert(6);
+    bst.insert(15);
+    bst.insert(11);
+    // 3, 5, 6, 10, 11, 12, 15 (expected output)
+    bst.traverse_inorder(std::cout);
+    std::cout << std::endl;
 
+    // 10, 5, 3, 6, 12, 11, 15 (expected output)
+    bst.traverse_preorder(std::cout);
+    std::cout << std::endl;
+}    
+
+TEST(test_min_greater_impl_basic) {
+    BinarySearchTree<int> bst;
+    for (int i = 0; i < 20; ++i) {
+        bst.insert(i);
+    }
+    auto i1 = bst.begin();
+    ASSERT_EQUAL(i1, bst.min_greater_than(19));
+    ++i1;
+    ++i1;
+    ++i1;
+    ++i1;
+    ++i1;
+    ASSERT_EQUAL(i1, bst.min_greater_than(4));
+    ++i1;
+    ASSERT_EQUAL(i1, bst.min_greater_than(5));
+    ++i1;
+    ++i1;
+    ++i1;
+    ++i1;
+    ++i1;
+    ASSERT_EQUAL(i1, bst.min_greater_than(10));
+}
 
 TEST_MAIN()

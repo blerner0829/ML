@@ -507,7 +507,17 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#In-order
   //       for the definition of a in-order traversal.
   static void traverse_inorder_impl(const Node *node, std::ostream &os) {
-    assert(true);
+    if (!node) {
+      return;
+    }
+    // Recursively traverse the current node's left subtree.
+    // Visit the current node (in the figure: position green).
+    // Recursively traverse the current node's right subtree.
+    else {
+    traverse_inorder_impl(node->left, os);
+    os << node->datum << " ";
+    traverse_inorder_impl(node->right, os);
+    }
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
@@ -518,7 +528,18 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#Pre-order
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os) {
-    assert(true);
+    if (!node) {
+      return;
+    }
+
+    // Visit the current node (in the figure: position red).
+    // Recursively traverse the current node's left subtree.
+    // Recursively traverse the current node's right subtree.  
+    else {
+      os << node->datum << " ";
+      traverse_preorder_impl(node->left, os);
+      traverse_preorder_impl(node->right, os);
+    }
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
@@ -533,10 +554,24 @@ private:
   //       'less' parameter). Based on the result, you gain some information
   //       about where the element you're looking for could be.
   static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
-    assert(true);
-    return node;
+    if (!node) {
+      return nullptr;
+    // if current node is less than val, start a recursive branch
+    // for right value to see if theres something even less
+  } else if (less(node->datum, val)) {
+      return min_greater_than_impl(node->right, val, less);
+    // if there isn't something less, the result is 
+  } else {
+      Node *result = min_greater_than_impl(node->left, val, less);
+    if (!result || less(node->datum, result->datum)) {
+      // Either there is no element greater than 'val' in the left subtree,
+      // or the current node's datum is smaller than the smallest element
+      // greater than 'val' found so far.
+      result = node;
+    }
+    return result;
   }
-
+}
 
 }; // END of BinarySearchTree class
 
