@@ -63,8 +63,17 @@ TEST(test_find_impl_basic) {
     ASSERT_EQUAL(i1, bst.find(30));
 }
 
-// FIXME:
-// insert doesn't work for BSTs that are not constantly
-// increasing or decreasing
+TEST(test_insert_impl_basic) {
+    BinarySearchTree<int> bst;
+    bst.insert(10);
+    bst.insert(5);
+    bst.insert(12);
+    bst.insert(3);
+    bst.insert(6);
+    bst.insert(15);
+    bst.insert(11);
+    ASSERT_EQUAL(3, bst.height());
+    ASSERT_EQUAL(7, bst.size());
+}
 
 TEST_MAIN()
