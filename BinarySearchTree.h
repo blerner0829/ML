@@ -352,8 +352,21 @@ private:
   static int height_impl(const Node *node) {
     if (!node) {
       return 0;
+      }
+    int left_height = height_impl(node->left);
+    int right_height = height_impl(node->right);
+    if (left_height > right_height) {
+      return 1 + left_height;
+    } else {
+      return 1 + right_height;
     }
-    return 1 + max(height_impl(node->left), height_impl(node->right));
+   /*
+    if (!node) {
+      return 0;
+    }
+    // error because max_element is a non-static function
+    return 1 + max_element(height_impl(node->left), height_impl(node->right));
+    */
   }
 
   // EFFECTS: Creates and returns a pointer to the root of a new node structure
@@ -369,11 +382,15 @@ private:
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node) {
-    if (node == nullptr) {
-        return;
+    if (!node) {
+      return;
     }
-    destroy_nodes_impl(node->left);
-    destroy_nodes_impl(node->right);
+    if (node->left != nullptr) {
+      destroy_nodes_impl(node->left);
+    }
+    if (node->right != nullptr) {
+      destroy_nodes_impl(node->right);
+    }
     delete node;
   }
 
@@ -390,7 +407,15 @@ private:
   //       Two elements A and B are equivalent if and only if A is
   //       not less than B and B is not less than A.
   static Node * find_impl(Node *node, const T &query, Compare less) {
-    assert(true);
+    if (!node || (!less(node->datum, query) && !less(query, node->datum))) {
+    return node;
+    }
+    if (less(node->datum, query)) {
+      return find_impl(node->right, query, less);
+    } else {
+      return find_impl(node->left, query, less);
+    }
+    return node;
   }
 
   // REQUIRES: item is not already contained in the tree rooted at 'node'
@@ -409,11 +434,10 @@ private:
   //       template, NOT according to the < operator. Use the "less"
   //       parameter to compare elements.
   static Node * insert_impl(Node *node, const T &item, Compare less) {
-     if (node == nullptr) {
-    return new Node(item);
+     if (!node) {
+      return new Node(item, nullptr, nullptr);
     }
-    else {}
-    if (less(item, node->datum)) {
+    else if (less(item, node->datum)) {
       node->left = insert_impl(node->left, item, less);
     } else {
       node->right = insert_impl(node->right, item, less);
@@ -429,16 +453,27 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the smallest element lives.
   static Node * min_element_impl(Node *node) {
-    assert(false);
+    // BASE CASE - left sub-tree is empty
+    if (!node->left) {
+      return node;
+    }
+    else { // RECURSIVE CASE - left sub-tree is not empty
+      return min_element_impl(node->left);
+    }
   }
-
   // EFFECTS : Returns a pointer to the Node containing the maximum element
   //           in the tree rooted at 'node' or a null pointer if the tree is empty.
   // NOTE: This function must be tail recursive.
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the largest element lives.
   static Node * max_element_impl(Node *node) {
-    assert(true);
+    // BASE CASE - right sub-tree is empty
+    if (!node->right) {
+      return node;
+    }
+    else { // RECURSIVE CASE - right sub-tree is not empty
+      return max_element_impl(node->right);
+    }
   }
 
 
@@ -447,6 +482,7 @@ private:
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
     assert(true);
+    return node;
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
@@ -484,6 +520,7 @@ private:
   //       about where the element you're looking for could be.
   static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
     assert(true);
+    return node;
   }
 
 
