@@ -60,6 +60,28 @@ public:
   // you should omit them. A user of the class must be able to create,
   // copy, assign, and destroy Maps.
 
+  Map() { }
+
+  // Copy constructor
+  Map(const Map &other)
+    : root(copy_nodes_impl(other.root)) { }
+
+  // Assignment operator
+  Map &operator=(const BinarySearchTree &rhs) {
+    if (this == &rhs) {
+      return *this;
+    }
+    destroy_nodes_impl(root);
+    root = copy_nodes_impl(rhs.root);
+    return *this;
+  }
+
+  // Destructor
+  ~Map() {
+    destroy_nodes_impl(root);
+  }
+
+
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const;
@@ -112,7 +134,8 @@ public:
   Iterator end() const;
 
 private:
-  // Add a BinarySearchTree private member HERE.
+  BinarySearchTree bst;
+
 };
 
 // You may implement member functions below using an "out-of-line" definition
