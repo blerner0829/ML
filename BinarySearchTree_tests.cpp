@@ -119,15 +119,15 @@ TEST(test_traverse_order_impl_basic) {
     bst.traverse_preorder(std::cout);
     std::cout << std::endl;
 }    
-/*
+
 TEST(test_min_greater_impl_basic) {
     BinarySearchTree<int> bst;
     for (int i = 0; i < 20; ++i) {
         bst.insert(i);
     }
     auto i1 = bst.begin();
-    ASSERT_EQUAL(i1, bst.min_greater_than(19));
     ++i1;
+    ASSERT_EQUAL(i1, bst.min_greater_than(0));
     ++i1;
     ++i1;
     ++i1;
@@ -142,5 +142,5 @@ TEST(test_min_greater_impl_basic) {
     ++i1;
     ASSERT_EQUAL(i1, bst.min_greater_than(10));
 }
-*/
+
 TEST_MAIN()
