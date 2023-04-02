@@ -94,12 +94,21 @@ TEST(test_min_max_element_impl_basic) {
 }
 
 TEST(test_check_sorting_invariant_basic) {
-    BinarySearchTree<int> bst;
+    BinarySearchTree<int> bst1;
     // initialize bst with values [0, 3]
     for (int i = 0; i < 4; ++i) {
-        bst.insert(i);
+        bst1.insert(i);
     }
-    ASSERT_TRUE(bst.check_sorting_invariant());
+    ASSERT_TRUE(bst1.check_sorting_invariant());
+
+    BinarySearchTree<int> bst2;
+    bst2.insert(0);
+    bst2.insert(1);
+
+    *bst2.begin() = 2;
+    ASSERT_FALSE(bst2.check_sorting_invariant());
+
+
 }
 
 TEST(test_traverse_order_impl_basic) { 
