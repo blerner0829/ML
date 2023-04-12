@@ -30,10 +30,16 @@ private:
   // value stored in a std::pair.
   // See http://www.cplusplus.com/reference/utility/pair/
   using Pair_type = std::pair<Key_type, Value_type>;
+  
 
   // A custom comparator
   class PairComp {
+    public:
+      bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
+        return lhs.first < rhs.first;
+      }
   };
+  BinarySearchTree<Pair_type, PairComp> bst;
 
 public:
 
@@ -64,35 +70,35 @@ public:
 
   // Copy constructor
   Map(const Map &other)
-    : root(copy_nodes_impl(other.root)) { }
+    : bst.root(copy_nodes_impl(other.bst.root)) {}
 
   // Assignment operator
-  Map &operator=(const BinarySearchTree &rhs) {
+  Map &operator=(const BinarySearchTree<Pair_type, PairComp> &rhs) {
     if (this == &rhs) {
       return *this;
     }
-    destroy_nodes_impl(root);
-    root = copy_nodes_impl(rhs.root);
+    destroy_nodes_impl(bst.root);
+    bst.root = copy_nodes_impl(rhs.bst.root);
     return *this;
   }
 
   // Destructor
   ~Map() {
-    destroy_nodes_impl(root);
+    destroy_nodes_impl(bst.root);
   }
 
 
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const{
-    return empty_impl(root);
+    return empty_impl(bst.root);
   }
 
   // EFFECTS : Returns the number of elements in this Map.
   // NOTE : size_t is an integral type from the STL
   size_t size() const{
-    return static_cast<size_t>(size_impl(root));
-  };
+    return static_cast<size_t>(size_impl(bst.root));
+  }
 
   // EFFECTS : Searches this Map for an element with a key equivalent
   //           to k and returns an Iterator to the associated value if found,
@@ -102,19 +108,7 @@ public:
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
   Iterator find(const Key_type& k) const {
-    Node *current = root;
-    
-    while (current != nullptr) {
-        if (k < current->datum.first) {
-            current = current->left;
-        } else if (current->datum.first < k) {
-            current = current->right;
-        } else {
-            return Iterator(&(current->datum), true);
-        }
-    }
-    
-    return end();
+   
   }
 
 
@@ -140,10 +134,10 @@ public:
     if (it != end()) {
       return it->second;
     }
-    /*what is type*/ result = /*how to insert*/make_pair({k, Value_type()});
+    pair<Iterator, bool> result = insert(make_pair({k, Value_type()}));
 
-    return result.first->second;
-  };
+    return result->second;
+  }
 
   // MODIFIES: this
   // EFFECTS : Inserts the given element into this Map if the given key
@@ -154,36 +148,26 @@ public:
   //           an iterator to the newly inserted element, along with
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val){
-
-  };
+    pair<Iterator, bool> result;
+    if (find(val.first) != end()) {
+      result.first = find(val.first);
+      result.second = false;
+    }
+    else {
+      result.first = tree.insert(val);
+      result.second = true;
+    }
+  }
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
   Iterator begin() const{
-    Node* current = root;
-    if (current == nullptr) {
-      return Iterator(nullptr, nullptr)
-    }
-    while (current->left != nullptr) {
-      current = current->left;
-    }
-    return Iterator(current, nullptr);
-  };
+    return bst.begin();
+  }
 
   // EFFECTS : Returns an iterator to "past-the-end".
   Iterator end() const{
-    Node* current = root;
-    if (current == nullptr) {
-      return Iterator(nullptr, nullptr)
-    }
-    while (current->right != nullptr) {
-      current = current->right;
-    }
-    return Iterator(current, nullptr);
-  };
-
-private:
-  BinarySearchTree bst;
-
+    return bst.end();
+  }
 };
 
 // You may implement member functions below using an "out-of-line" definition
