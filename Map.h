@@ -108,7 +108,7 @@ public:
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
   Iterator find(const Key_type& k) const {
-   
+   return bst.find({k, Value_type()});
   }
 
 
@@ -134,7 +134,7 @@ public:
     if (it != end()) {
       return it->second;
     }
-    pair<Iterator, bool> result = insert(make_pair({k, Value_type()}));
+    std::pair<Iterator, bool> result = insert(make_pair({k, Value_type()}));
 
     return result->second;
   }
@@ -154,7 +154,7 @@ public:
       result.second = false;
     }
     else {
-      result.first = tree.insert(val);
+      result.first = bst.insert(val);
       result.second = true;
     }
   }
