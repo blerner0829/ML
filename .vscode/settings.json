@@ -49,6 +49,7 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "set": "cpp"
     }
 }
