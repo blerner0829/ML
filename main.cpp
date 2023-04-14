@@ -12,12 +12,22 @@
 
 using namespace std;
 
+set<string> unique_words(const string &str) {
+  istringstream source(str);
+  set<string> words;
+  string word;
+  while (source >> word) {
+    words.insert(word);
+  }
+  return words;
+}
+
 class Classifier {
   private:
     int numPosts = 0;
     int total_unique_words = 0;
-    double logPC = 0;
-    double logPWC = 0;
+    double logPCvar = 0;
+    double logPWCvar = 0;
     set<string> unique_word_set;
     map<string, int> word_occur;
     map<string, int> label_occur;
@@ -108,32 +118,22 @@ class Classifier {
     }
 
     void logPC(string label, map<string, map<string, string>> string_storage) {
-      logPC = log(label_occur[label] / numPosts);
+      logPCvar = log(label_occur[label] / numPosts);
     }
 
     void logPWC(string label, string word) {
       if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
-        logPWC = log(label_word_counts[label][word] / numPosts);
+        logPWCvar = log(label_word_counts[label][word] / numPosts);
       }
       else if (word_occur.count(word)) {
-        logPWC = log(word_occur[word] / numPosts);
+        logPWCvar = log(word_occur[word] / numPosts);
       }
       else {
-        logPWC = log(1 / numPosts);
+        logPWCvar = log(1 / numPosts);
       }
     }
 
 };
-
-set<string> unique_words(const string &str) {
-  istringstream source(str);
-  set<string> words;
-  string word;
-  while (source >> word) {
-    words.insert(word);
-  }
-  return words;
-}
 
 int main(int argc, char* argv[]) {
   set<string> unique_word_set;
@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
   int total_unique_words = 0;
   map<string, map<string, string>> string_storage;
   cout.precision(3);
-  if ((argc != 3) && (argc != 4) || ((argc == 4) && (argv[3] != "--debug"))) {
+  if (((argc != 3) && (argc != 4)) || ((argc == 4) && (argv[3] != "--debug"))) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
     return 1;
   };
