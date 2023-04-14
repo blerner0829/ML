@@ -16,6 +16,8 @@ class Classifier {
   private:
     int numPosts = 0;
     int total_unique_words = 0;
+    double logPC = 0;
+    double logPWC = 0;
     set<string> unique_word_set;
     map<string, int> word_occur;
     map<string, int> label_occur;
@@ -91,6 +93,35 @@ class Classifier {
       }
     }
 
+    void wordAndLabel(map<string, map<string, string>> string_storage) {
+      for (const auto& outerPair : string_storage) {
+        for (const auto& innerPair : outerPair.second) {
+          string label = innerPair.first;
+          string content = innerPair.second;
+          for (const auto& word : unique_word_set) {
+            if (content.find(word) != string::npos) {
+              label_word_counts[label][word]++;
+            }
+          }
+        }
+      }
+    }
+
+    void logPC(string label, map<string, map<string, string>> string_storage) {
+      logPC = log(label_occur[label] / numPosts);
+    }
+
+    void logPWC(string label, string word) {
+      if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
+        logPWC = log(label_word_counts[label][word] / numPosts);
+      }
+      else if (word_occur.count(word)) {
+        logPWC = log(word_occur[word] / numPosts);
+      }
+      else {
+        logPWC = log(1 / numPosts);
+      }
+    }
 
 };
 
@@ -124,5 +155,8 @@ int main(int argc, char* argv[]) {
   total_unique_words = train.totalUniqueWords(string_storage, unique_word_set);
   train.wordOccurances(string_storage);
   train.labelOccurances(string_storage);
+  train.wordAndLabel(string_storage);
+
+
 
 }
