@@ -1,3 +1,11 @@
+//q: what is wrong with the file below and why are there errors?
+//a: the copy constructor and assignment operator are not defined correctly
+//q: what is the correct way to define them?
+//a: see the solution below
+//q: What line is the solution?
+//a: 73-83
+
+
 #ifndef MAP_H
 #define MAP_H
 /* Map.h
@@ -67,12 +75,30 @@ public:
   // copy, assign, and destroy Maps.
 
   Map() { }
-
+/*
   // Copy constructor
   Map(const Map &other)
-    : bst.root(copy_nodes_impl(other.bst.root)) {}
+    : bst.root(copy_nodes_impl(other.bst.root)) {
 
-  // Assignment operator
+    }
+*/
+
+// copy ctor
+  Map(const Map &other) {
+    bst.root = copy_nodes_impl(other.bst.root);
+  }
+// assignment operator that Benny wrote
+  Map &operator=(const Map &other) {
+    if (this == &other) {
+      return *this;
+    }
+
+    bst(bst.begin());
+    bst.root = copy_nodes_impl(other.bst.root);
+    return *this;
+  }
+// assignment operator that Josh wrote
+/*
   Map &operator=(const BinarySearchTree<Pair_type, PairComp> &rhs) {
     if (this == &rhs) {
       return *this;
@@ -81,16 +107,26 @@ public:
     bst.root = copy_nodes_impl(rhs.bst.root);
     return *this;
   }
+*/
 
-  // Destructor
-  ~Map() {
-    destroy_nodes_impl(bst.root);
+// another one not sure which works best
+  /*
+  // Assignment operator
+  Map &operator=(const BinarySearchTree<Pair_type, PairComp> &rhs) {
+    if (this == &rhs) {
+      return *this;
+    }
+
+    bst(bst.begin());
+    bst.root = copy_nodes_impl(rhs.bst.begin());
+    return *this;
   }
-
+*/
+  // Destructor
 
 
   // EFFECTS : Returns whether this Map is empty.
-  bool empty() const{
+  bool empty() const {
     return empty_impl(bst.root);
   }
 
@@ -108,7 +144,7 @@ public:
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
   Iterator find(const Key_type& k) const {
-   return bst.find({k, Value_type()});
+    return bst.find({k, Value_type()});
   }
 
 
@@ -128,6 +164,8 @@ public:
   //           that element. This ensures the proper value-initialization is done.
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
+
+/*
   Value_type& operator[](const Key_type& k){
     Iterator it = find(k);
 
@@ -138,7 +176,15 @@ public:
 
     return result->second;
   }
-
+*/
+ Value_type& operator[](const Key_type& k) {
+    Iterator it = find(k);
+    if (it != end()) {
+      return it->second;
+    }
+    std::pair<Iterator, bool> result = insert({k, Value_type()});
+    return result.first->second;
+ }
   // MODIFIES: this
   // EFFECTS : Inserts the given element into this Map if the given key
   //           is not already contained in the Map. If the key is
@@ -148,7 +194,7 @@ public:
   //           an iterator to the newly inserted element, along with
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val){
-    pair<Iterator, bool> result;
+    std::pair<Iterator, bool> result;
     if (find(val.first) != end()) {
       result.first = find(val.first);
       result.second = false;
@@ -157,6 +203,7 @@ public:
       result.first = bst.insert(val);
       result.second = true;
     }
+    return result;
   }
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
