@@ -21,9 +21,10 @@ class Classifier {
     map<string, int> label_occur;
     map<string, map<string, int>> label_word_counts;
     map<string, map<string, string>> string_storage;
-
+    
   public:
-    map<string, map<string, string>> storeString(csvstream file) {
+    Classifier (){}
+    map<string, map<string, string>> storeString(csvstream &file) {
       map<string, string> row;
       while (file >> row){
         string_storage[row["n"]][row["tag"]] = row["content"];
@@ -39,6 +40,7 @@ class Classifier {
           highest_n = n_value;
         }
       }
+      numPosts = stoi(highest_n);
       return stoi(highest_n);
     }
 
@@ -53,7 +55,7 @@ class Classifier {
       return total;
     }
 
-    void wordOccurances(map<string, int> &word_occur, map<string, map<string, string>> string_storage) {
+    void wordOccurances(map<string, map<string, string>> string_storage) {
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           istringstream stream(innerPair.second);
@@ -73,7 +75,7 @@ class Classifier {
       }
     }
 
-    void labelOccurances(map<string, int> &label_occur, map<string, map<string, string>> string_storage) {
+    void labelOccurances(map<string, map<string, string>> string_storage) {
       set<string> uniqueLabelsInString;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
@@ -88,6 +90,8 @@ class Classifier {
         }
       }
     }
+
+
 };
 
 set<string> unique_words(const string &str) {
@@ -101,6 +105,10 @@ set<string> unique_words(const string &str) {
 }
 
 int main(int argc, char* argv[]) {
+  set<string> unique_word_set;
+  int total_posts = 0;
+  int total_unique_words = 0;
+  map<string, map<string, string>> string_storage;
   cout.precision(3);
   if ((argc != 3) && (argc != 4) || ((argc == 4) && (argv[3] != "--debug"))) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
@@ -109,6 +117,12 @@ int main(int argc, char* argv[]) {
 
   csvstream trainFile(argv[1]);
   csvstream testFile(argv[2]);
+  Classifier train;
 
+  string_storage = train.storeString(trainFile);
+  total_posts = train.countPosts(string_storage);
+  total_unique_words = train.totalUniqueWords(string_storage, unique_word_set);
+  train.wordOccurances(string_storage);
+  train.labelOccurances(string_storage);
 
 }
