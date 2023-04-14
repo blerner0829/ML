@@ -50,6 +50,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "utility": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "map": "cpp"
     }
 }
