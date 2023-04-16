@@ -25,7 +25,6 @@ set<string> unique_words(const string &str) {
 class Classifier {
   private:
     int numPosts = 0;
-    int total_unique_words = 0;
     double logPCvar = 0;
     double logPWCvar = 0;
     set<string> unique_word_set;
@@ -191,7 +190,7 @@ int main(int argc, char* argv[]) {
   int total_unique_words = 0;
   map<string, map<string, string>> string_storage;
   cout.precision(3);
-  if (((argc != 3) && (argc != 4)) || ((argc == 4) && (argv[3] != "--debug"))) {
+  if (((argc != 3) && (argc != 4)) || ((argc == 4) && (strcmp(argv[3], "--debug") != 0))) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
     return 1;
   };
