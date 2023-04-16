@@ -1,9 +1,3 @@
-//q: what is wrong with the file below and why are there errors?
-//a: the copy constructor and assignment operator are not defined correctly
-//q: what is the correct way to define them?
-//a: see the solution below
-//q: What line is the solution?
-//a: 73-83
 
 
 #ifndef MAP_H
@@ -44,9 +38,18 @@ private:
   class PairComp {
     public:
       bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
-        return lhs.first < rhs.first;
+        if (lhs.second < rhs.second) {
+          return true;
+        } else if (rhs.second < lhs.second) {
+          return false;
+        } else {
+          // If the keys are equal, compare the values
+          return lhs.second < rhs.second;
+        }
       }
   };
+      
+  
   BinarySearchTree<Pair_type, PairComp> bst;
 
 public:
@@ -84,10 +87,18 @@ public:
 */
 
 // copy ctor
+/*
+  Map(const Map &other) {
+    bst.BinarySearchTree(other);
+  }
+  */
+/*
   Map(const Map &other) {
     bst.root = copy_nodes_impl(other.bst.root);
   }
+  */
 // assignment operator that Benny wrote
+/*
   Map &operator=(const Map &other) {
     if (this == &other) {
       return *this;
@@ -97,6 +108,15 @@ public:
     bst.root = copy_nodes_impl(other.bst.root);
     return *this;
   }
+*/
+
+// chat got us covered here
+  Map& operator=(const Map &other) {
+  if (this != &other) {
+    bst = other.bst;
+  }
+  return *this;
+}
 // assignment operator that Josh wrote
 /*
   Map &operator=(const BinarySearchTree<Pair_type, PairComp> &rhs) {
@@ -123,17 +143,19 @@ public:
   }
 */
   // Destructor
-
+  ~Map() {
+    bst.~BinarySearchTree();
+  }
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const {
-    return empty_impl(bst.root);
+    return bst.empty();
   }
 
   // EFFECTS : Returns the number of elements in this Map.
   // NOTE : size_t is an integral type from the STL
   size_t size() const{
-    return static_cast<size_t>(size_impl(bst.root));
+    return static_cast<size_t>(bst.size());
   }
 
   // EFFECTS : Searches this Map for an element with a key equivalent
