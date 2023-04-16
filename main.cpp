@@ -245,7 +245,10 @@ int main(int argc, char* argv[]) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
     return 1;
   };
-
+  bool isDebug = false;
+  if (argv[3] == "--debug") {
+    isDebug = true;
+  }
   csvstream trainFile(argv[1]);
   csvstream testFile(argv[2]);
   Classifier train;
@@ -262,13 +265,16 @@ int main(int argc, char* argv[]) {
   //for each label calculate a log score by adding the log of all the words together
   //store the first one as the greatest value and subsequently compare all following against the first
   map<string, map<string, string>> test_string_storage = train.storeString(testFile);
-  train.printTrainingData(string_storage); // if debug
+  if (isDebug) {
+    train.printTrainingData(string_storage); // if debug
+  }
   cout << "trained on" << total_posts << "examples" << endl;
-  cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
-  train.printClasses(); // if debug
-  train.printClassifierParamaters(); // if debug
 
-
+  if (isDebug) {
+    cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
+    train.printClasses(); // if debug
+    train.printClassifierParamaters(); // if debug
+  }
   train.printTestData(test_string_storage);
   train.printPerformance(test_string_storage);
 
