@@ -156,7 +156,53 @@ class Classifier {
     }
 
     // https://eecs280staff.github.io/p5-ml/#example
+    // for each, prints out labal and content
+    void printTrainingData(map<string, map<string, string>> string_storage) {
+      cout << "training data:" << endl;
+      for (const auto& outerPair : string_storage) {
+        for (const auto& innerPair : outerPair.second) {
+          cout << "  label = " << innerPair.first;
+          cout << ",  content = " << innerPair.second << endl;
+          }
+      }
+    }
 
+    // https://eecs280staff.github.io/p5-ml/#example
+    // print out each label, number of examples it was trained on, and the value for log-prior
+    // print all of these using a for loop to iterate through the labels
+    void printClasses() {
+      cout << "classes:" << endl;
+      for (const auto& label : unique_word_set) {
+        cout << "  label = " << label;
+        cout << ", " << label_occur[label] << " examples";
+        logPC(label);
+        cout << ",  log-prior = " << logPCvar << endl;
+        }
+    }
+    // https://eecs280staff.github.io/p5-ml/#example
+    //For each label, and for each word that occurs for that label: The number of posts with that label that contained the word, 
+    // and the log-likelihood of the word given the label.
+    // ex: 
+    // classifier parameters:
+    // calculator:assert, count = 1, log-likelihood = -1.1
+    // calculator:big, count = 1, log-likelihood = -1.1
+    // euchre:twice, count = 1, log-likelihood = -1.61
+    // euchre:upcard, count = 2, log-likelihood = -0.916
+    void printClassifierParamaters() {
+      cout << "classifier parameters:" << endl;
+      for (const auto& label : unique_word_set) {
+        for (const auto& word : unique_word_set) {
+          if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
+            cout << "  " << label << ":" << word << ", count = " << label_word_counts[label][word];
+            logPWC(label, word);
+            cout << ", log-likelihood = " << logPWCvar << endl;
+          }
+        }
+      }
+      cout << endl;
+    }
+
+    // https://eecs280staff.github.io/p5-ml/#example
     void printTestData(map<string, map<string, string>> test_string_storage) {
       cout << "test data:" << endl;
       for (const auto& outerPair : string_storage) {
@@ -168,21 +214,25 @@ class Classifier {
           }
       }
     }
-
-    // https://eecs280staff.github.io/p5-ml/#example
-    // for each, prints out labal and content
-    void printTrainingData(map<string, map<string, string>> string_storage) {
-      cout << "training data:" << endl;
+    
+    // Print the number of correct predictions and total number of test posts.
+    // ex:
+    // performance: 2 / 3 posts predicted correctly
+    void printPerformance(map<string, map<string, string>> test_string_storage) {
+      int correct = 0;
+      int total = 0;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
-          cout << "  label = " << innerPair.first;
-          cout << ",  content = " << innerPair.second << endl;
+          if (innerPair.first == predict(innerPair.second).first) {
+            correct++;
+          }
+          total++;
           }
       }
+      cout << "performance: " << correct << " / " << total << " posts predicted correctly" << endl;
     }
-  };
-
-
+    
+};
 
 int main(int argc, char* argv[]) {
   set<string> unique_word_set;
@@ -214,11 +264,12 @@ int main(int argc, char* argv[]) {
   train.printTrainingData(string_storage); // if debug
   cout << "trained on" << total_posts << "examples" << endl;
   cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
+  train.printClasses(); // if debug
+  train.printClassifierParamaters(); // if debug
 
-  // https://eecs280staff.github.io/p5-ml/#example
-  cout << "classes:" << endl;
-  
+
   train.printTestData(test_string_storage);
+  train.printPerformance(test_string_storage);
 
 
 
