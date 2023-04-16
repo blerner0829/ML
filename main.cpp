@@ -117,7 +117,7 @@ class Classifier {
       }
     }
 
-    void logPC(string label, map<string, map<string, string>> string_storage) {
+    void logPC(string label) {
       logPCvar = log(label_occur[label] / numPosts);
     }
 
@@ -133,7 +133,13 @@ class Classifier {
       }
     }
 
+    void dataPrinter(map<string, map<string, string>> string_storage) {
+      cout << " correct = " << 
+    }
+
 };
+
+
 
 int main(int argc, char* argv[]) {
   set<string> unique_word_set;
@@ -156,6 +162,14 @@ int main(int argc, char* argv[]) {
   train.wordOccurances(string_storage);
   train.labelOccurances(string_storage);
   train.wordAndLabel(string_storage);
+
+  //take the words from the post in the test file
+  //iterate through the labels from the training set
+  //for each label calculate a log score by adding the log of all the words together
+  //store the first one as the greatest value and subsequently compare all following against the first
+
+  cout << "trained on" << total_posts << "examples" << endl << endl;
+  cout << "test data:" << endl;
 
 
 
