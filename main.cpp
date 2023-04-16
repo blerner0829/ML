@@ -137,6 +137,28 @@ class Classifier {
       cout << " correct = " << 
     }
 
+    pair<string, double> predict(string content) {
+      map<string, double> label_prob;
+        for (const auto& label : unique_word_set) {
+          double prob = 0;
+            for (const auto& word : unique_words(content)) {
+              logPWC(label, word);
+              prob += logPWCvar;
+            }
+          logPC(label);
+          prob += logPCvar;
+          label_prob[label] = prob;
+        }
+      string highest_label = "";
+      double highest_prob = 0;
+      for (const auto& pair : label_prob) {
+        if (pair.second > highest_prob) {
+          highest_label = pair.first;
+          highest_prob = pair.second;
+        }
+      }
+    return pair<string, double>(highest_label, highest_prob);
+  }
 };
 
 
