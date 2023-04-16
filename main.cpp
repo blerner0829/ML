@@ -35,7 +35,7 @@ class Classifier {
     map<string, map<string, string>> string_storage;
     
   public:
-    Classifier (){}
+    Classifier () {}
     map<string, map<string, string>> storeString(csvstream &file) {
       map<string, string> row;
       while (file >> row){
@@ -133,22 +133,18 @@ class Classifier {
       }
     }
 
-    void dataPrinter(map<string, map<string, string>> string_storage) {
-      cout << " correct = " << 
-    }
-
     pair<string, double> predict(string content) {
       map<string, double> label_prob;
-        for (const auto& label : unique_word_set) {
-          double prob = 0;
-            for (const auto& word : unique_words(content)) {
-              logPWC(label, word);
-              prob += logPWCvar;
-            }
-          logPC(label);
-          prob += logPCvar;
-          label_prob[label] = prob;
+      for (const auto& label : unique_word_set) {
+        double prob = 0;
+        for (const auto& word : unique_words(content)) {
+          logPWC(label, word);
+          prob += logPWCvar;
         }
+        logPC(label);
+        prob += logPCvar;
+        label_prob[label] = prob;
+      }
       string highest_label = "";
       double highest_prob = 0;
       for (const auto& pair : label_prob) {
@@ -157,9 +153,35 @@ class Classifier {
           highest_prob = pair.second;
         }
       }
-    return pair<string, double>(highest_label, highest_prob);
-  }
-};
+      return pair<string, double>(highest_label, highest_prob);
+    }
+
+    // https://eecs280staff.github.io/p5-ml/#example
+
+    void printTestData(map<string, map<string, string>> test_string_storage) {
+      cout << "test data:" << endl;
+      for (const auto& outerPair : string_storage) {
+        for (const auto& innerPair : outerPair.second) {
+          cout << "  correct = " << innerPair.first;
+          cout << ", predicted = " << predict(innerPair.second).first;
+          cout << ", prob = " << predict(innerPair.second).second << endl;
+          cout << "  content = " << innerPair.second << endl << endl;
+          }
+      }
+    }
+
+    // https://eecs280staff.github.io/p5-ml/#example
+    // for each, prints out labal and content
+    void printTrainingData(map<string, map<string, string>> string_storage) {
+      cout << "training data:" << endl;
+      for (const auto& outerPair : string_storage) {
+        for (const auto& innerPair : outerPair.second) {
+          cout << "  label = " << innerPair.first;
+          cout << ",  content = " << innerPair.second << endl;
+          }
+      }
+    }
+  };
 
 
 
@@ -189,9 +211,15 @@ int main(int argc, char* argv[]) {
   //iterate through the labels from the training set
   //for each label calculate a log score by adding the log of all the words together
   //store the first one as the greatest value and subsequently compare all following against the first
+  map<string, map<string, string>> test_string_storage = train.storeString(testFile);
+  train.printTrainingData(string_storage); // if debug
+  cout << "trained on" << total_posts << "examples" << endl;
+  cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
 
-  cout << "trained on" << total_posts << "examples" << endl << endl;
-  cout << "test data:" << endl;
+  // https://eecs280staff.github.io/p5-ml/#example
+  cout << "classes:" << endl;
+  
+  train.printTestData(test_string_storage);
 
 
 
