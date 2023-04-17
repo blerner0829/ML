@@ -51,14 +51,48 @@ private:
   };
 */
 
+// What do these specs say about the PairComp functor? https://eecs280staff.github.io/p5-ml/#building-on-the-bst
+// The PairComp functor should compare the keys of the pairs, not the values.
 
+//Based on the information above, implement a PairComp functor that compares the keys of the pairs, not the values.
+//You can use the PairComp functor from the BinarySearchTree public tests as a starting point.
+//You can also use the PairComp functor from the Map public tests as a starting point.
+
+/*
+class PairComp {
+  private:
+    Key_compare key_comp;
+
+  public:
+    PairComp() : key_comp() {}
+
+    PairComp(Key_compare kc) : key_comp(kc) {}
+
+    bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
+      return Key_compare(lhs.first, rhs.first);
+    }
+};
+*/
+struct PairComp {
+    Key_compare less;
+    bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
+      return less(lhs.first, rhs.first);
+    }
+    bool operator()(const Pair_type& lhs, const Key_type& rhs) const {
+      return less(lhs.first, rhs);
+    }
+    bool operator()(const Key_type& lhs, const Pair_type& rhs) const {
+      return less(lhs, rhs.first);
+    }
+  };
+/*
   class PairComp {
     public:
       bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
         return lhs.first < rhs.first;
-      }
+    }
   };
-
+*/
   BinarySearchTree<Pair_type, PairComp> bst;
 
 public:
@@ -86,7 +120,8 @@ public:
   // you should omit them. A user of the class must be able to create,
   // copy, assign, and destroy Maps.
 
-  Map() { }
+  Map() {
+  }
 /*
   // Copy constructor
   Map(const Map &other)
@@ -118,8 +153,6 @@ public:
     return *this;
   }
 */
-
-// chat got us covered here
   Map& operator=(const Map &other) {
   if (this != &other) {
     bst = other.bst;
