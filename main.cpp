@@ -58,7 +58,7 @@ class Classifier {
       return stoi(highest_n);
     }
 
-    int totalUniqueWords(map<string, map<string, string>> string_storage, set<string> &unique_word_set) {
+    int totalUniqueWords(map<string, map<string, string>> string_storage) {
       int total = 0;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
@@ -208,6 +208,7 @@ class Classifier {
       cout << endl;
     }
 
+
     // https://eecs280staff.github.io/p5-ml/#example
     void printTestData(map<string, map<string, string>> test_string_storage) {
       cout << "test data:" << endl;
@@ -251,7 +252,7 @@ int main(int argc, char* argv[]) {
     return 1;
   };
   bool isDebug = false;
-  if ((argc == 4) && strcmp(argv[3], "--debug")) {
+  if ((argc == 4) && !(strcmp(argv[3], "--debug"))) {
     isDebug = true;
   }
   csvstream trainFile(argv[1]);
@@ -260,7 +261,7 @@ int main(int argc, char* argv[]) {
 
   string_storage_main = train.storeString(trainFile);
   total_posts = train.countPosts(string_storage_main);
-  total_unique_words = train.totalUniqueWords(string_storage_main, unique_word_set);
+  total_unique_words = train.totalUniqueWords(string_storage_main);
   train.wordOccurances(string_storage_main);
   train.labelOccurances(string_storage_main);
   train.wordAndLabel(string_storage_main);
