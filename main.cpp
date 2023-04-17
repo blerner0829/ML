@@ -46,6 +46,10 @@ class Classifier {
       string_storage.clear();
     }
 
+    int wordCounter(){
+      return word_occur.size();
+    }
+
     int countPosts(map<string, map<string, string>> string_storage) {
       string highest_n= "0";
       for (const auto& pair : string_storage) {
@@ -56,18 +60,6 @@ class Classifier {
       }
       numPosts = stoi(highest_n);
       return stoi(highest_n);
-    }
-
-    int totalUniqueWords(map<string, map<string, string>> string_storage) {
-      int total = 0;
-      for (const auto& outerPair : string_storage) {
-        for (const auto& innerPair : outerPair.second) {
-          set<string> innerSet = unique_words(innerPair.second);
-          total += innerSet.size();
-          unique_word_set.insert(innerSet.begin(), innerSet.end());
-        }
-      }
-      return total;
     }
 
     void wordOccurances(map<string, map<string, string>> string_storage) {
@@ -180,12 +172,14 @@ class Classifier {
     // print all of these using a for loop to iterate through the labels
     void printClasses() {
       cout << "classes:" << endl;
-      for (const auto& label : unique_word_set) {
+      for (const auto& pair : label_occur) {
+        const std::string& label = pair.first;
         cout << "  label = " << label;
-        cout << ", " << label_occur[label] << " examples";
+        cout << ", " << pair.second << " examples";
         cout << ",  log-prior = " << logPC(label) << endl;
-        }
-    }
+      }
+}
+
     // https://eecs280staff.github.io/p5-ml/#example
     //For each label, and for each word that occurs for that label: The number of posts with that label that contained the word, 
     // and the log-likelihood of the word given the label.
@@ -197,16 +191,18 @@ class Classifier {
     // euchre:upcard, count = 2, log-likelihood = -0.916
     void printClassifierParamaters() {
       cout << "classifier parameters:" << endl;
-      for (const auto& label : unique_word_set) {
-        for (const auto& word : unique_word_set) {
-          if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
+      for (const auto& labelPair : label_occur) {
+        const string& label = labelPair.first;
+        for (const auto& wordPair : word_occur) {
+          const string& word = wordPair.first;
             cout << "  " << label << ":" << word << ", count = " << label_word_counts[label][word];
             cout << ", log-likelihood = " << logPWC(label, word) << endl;
-          }
         }
       }
       cout << endl;
     }
+
+
 
 
     // https://eecs280staff.github.io/p5-ml/#example
@@ -261,10 +257,10 @@ int main(int argc, char* argv[]) {
 
   string_storage_main = train.storeString(trainFile);
   total_posts = train.countPosts(string_storage_main);
-  total_unique_words = train.totalUniqueWords(string_storage_main);
   train.wordOccurances(string_storage_main);
   train.labelOccurances(string_storage_main);
   train.wordAndLabel(string_storage_main);
+  total_unique_words = train.wordCounter();
 
   //take the words from the post in the test file
   //iterate through the labels from the training set
@@ -275,7 +271,7 @@ int main(int argc, char* argv[]) {
   if (isDebug) {
     train.printTrainingData(string_storage_main); // if debug
   }
-  cout << "trained on " << total_posts << " examples" << endl << endl;
+  cout << "trained on " << total_posts << " examples" << endl;
 
   if (isDebug) {
     cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
