@@ -10,7 +10,6 @@ TEST(test_empty_impl) {
     ASSERT_FALSE(bst.empty());
 }
 
-
 TEST(test_size_height_impl_basic) {
     BinarySearchTree<int> bst;
     ASSERT_EQUAL(0, bst.size());
@@ -22,6 +21,37 @@ TEST(test_size_height_impl_basic) {
     ASSERT_EQUAL(20, bst.height());
 }
 
+TEST(test_size_height_impl_empty) {
+    BinarySearchTree<int> bst;
+    ASSERT_EQUAL(0, bst.size());
+    ASSERT_EQUAL(0, bst.height());
+}
+
+TEST(test_size_height_impl_single) {
+    BinarySearchTree<int> bst;
+    bst.insert(42);
+    ASSERT_EQUAL(1, bst.size());
+    ASSERT_EQUAL(1, bst.height());
+}
+
+TEST(test_size_height_impl_balanced) {
+    BinarySearchTree<int> bst;
+    for (int i = 0; i < 7; ++i) {
+        bst.insert(i);
+    }
+    ASSERT_EQUAL(7, bst.size());
+    ASSERT_NOT_EQUAL(3, bst.height());
+}
+
+TEST(test_size_height_impl_unbalanced) {
+    BinarySearchTree<int> bst;
+    for (int i = 0; i < 15; ++i) {
+        bst.insert(i);
+    }
+    ASSERT_EQUAL(15, bst.size());
+    ASSERT_NOT_EQUAL(14, bst.height());
+}
+
 TEST(test_copy_node_impl_basic) {
     BinarySearchTree<int> bst;
     for (int i = 0; i < 20; ++i) {
@@ -31,6 +61,15 @@ TEST(test_copy_node_impl_basic) {
 
     ASSERT_EQUAL(20, copy.size());
     ASSERT_EQUAL(20, copy.height());
+}
+
+TEST(test_copy_node_impl_empty) {
+    BinarySearchTree<int> bst;
+    BinarySearchTree<int> copy(bst);
+
+    ASSERT_TRUE(copy.empty());
+    ASSERT_EQUAL(0, copy.size());
+    ASSERT_EQUAL(0, copy.height());
 }
 
 TEST(test_destroy_nodes_impl_basic) {
@@ -45,6 +84,25 @@ TEST(test_destroy_nodes_impl_basic) {
     bst2 = bst1;
     ASSERT_EQUAL(15, bst2.size());
     ASSERT_EQUAL(15, bst2.height());
+}
+
+TEST(test_destroy_nodes_impl_empty) {
+    BinarySearchTree<int> bst1;
+    BinarySearchTree<int> bst2;
+    bst2.insert(100);
+    bst2 = bst1;
+    ASSERT_TRUE(bst2.empty());
+    ASSERT_EQUAL(0, bst2.size());
+    ASSERT_EQUAL(0, bst2.height());
+}
+
+
+TEST(test_dtor_empty) {
+    BinarySearchTree<int> bst;
+    bst.~BinarySearchTree();
+    ASSERT_TRUE(bst.empty());
+    ASSERT_EQUAL(0, bst.size());
+    ASSERT_EQUAL(0, bst.height());
 }
 
 TEST(test_find_impl_basic) {
@@ -65,6 +123,10 @@ TEST(test_find_impl_basic) {
     ASSERT_EQUAL(i1, bst.find(30));
 }
 
+TEST(test_find_impl_empty) {
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.find(0) == bst.end());
+}
 
 TEST(test_insert_impl_basic) {
     BinarySearchTree<int> bst;
@@ -78,7 +140,18 @@ TEST(test_insert_impl_basic) {
     ASSERT_EQUAL(3, bst.height());
     ASSERT_EQUAL(7, bst.size());
 }
-
+/*
+TEST(test_insert_impl_duplicates) {
+    BinarySearchTree<int> bst;
+    bst.insert(10);
+    bst.insert(5);
+    bst.insert(12);
+    bst.insert(3);
+    bst.insert(6);
+    bst.insert(15);
+    bst.insert(11);
+}
+*/
 TEST(test_min_max_element_impl_basic) {
     BinarySearchTree<int> bst;
     // initialize bst with values [0, 3]
@@ -96,6 +169,19 @@ TEST(test_min_max_element_impl_basic) {
     ASSERT_EQUAL(i1, bst.max_element());
 }
 
+TEST(test_min_max_element_impl_empty) {
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.min_element() == bst.end());
+    ASSERT_TRUE(bst.max_element() == bst.end());
+    // how do I fix this segfault?
+    // a: you can't, it's a bug in the code
+    // what line in BinarySearchTree.h is the bug?
+    // what is the bug?
+    // a: the bug is that the code is not checking if the tree is empty
+
+
+}
+
 TEST(test_check_sorting_invariant_basic) {
     BinarySearchTree<int> bst1;
     // initialize bst with values [0, 3]
@@ -110,8 +196,11 @@ TEST(test_check_sorting_invariant_basic) {
 
     *bst2.begin() = 2;
     ASSERT_FALSE(bst2.check_sorting_invariant());
+}
 
-
+TEST(test_check_sorting_invariant_empty) {
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.check_sorting_invariant());
 }
 
 TEST(test_traverse_order_impl_basic) { 
@@ -131,6 +220,15 @@ TEST(test_traverse_order_impl_basic) {
     bst.traverse_preorder(std::cout);
     std::cout << std::endl;
 }    
+
+TEST(test_traverse_order_impl_empty) {
+    BinarySearchTree<int> bst;
+    bst.traverse_inorder(std::cout);
+    std::cout << std::endl;
+    ASSERT_EQUAL(0, bst.height());
+    bst.traverse_preorder(std::cout);
+    std::cout << std::endl;
+}
 
 TEST(test_min_greater_impl_basic) {
     BinarySearchTree<int> bst;
@@ -153,6 +251,14 @@ TEST(test_min_greater_impl_basic) {
     ++i1;
     ++i1;
     ASSERT_EQUAL(i1, bst.min_greater_than(10));
+}
+
+TEST(test_min_greater_impl_empty) {
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.min_greater_than(0) == bst.end());
+    bst.insert(42);
+    ASSERT_TRUE(bst.min_greater_than(42) == bst.end());
+    ASSERT_TRUE(bst.min_greater_than(100) == bst.end());
 }
 
 TEST_MAIN()

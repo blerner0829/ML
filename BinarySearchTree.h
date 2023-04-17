@@ -108,6 +108,12 @@ public:
   ~BinarySearchTree() {
     destroy_nodes_impl(root);
   }
+  // why is this destructor causing a segefault?
+  // a: because the destructor is called on a temporary object
+  // how do I fix it?
+  // a: make it a non-member function
+  // is there another way?
+  
 
   // EFFECTS: Returns whether this BinarySearchTree is empty.
   bool empty() const {
@@ -453,6 +459,10 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the smallest element lives.
   static Node * min_element_impl(Node *node) {
+    // returns nullptr if tree is empty
+    if (!node) {
+      return nullptr;
+    }
     // BASE CASE - left sub-tree is empty
     if (!node->left) {
       return node;
@@ -467,6 +477,10 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the largest element lives.
   static Node * max_element_impl(Node *node) {
+    // returns nullptr if tree is empty
+    if (!node) {
+      return nullptr;
+    }
     // BASE CASE - right sub-tree is empty
     if (!node->right) {
       return node;
