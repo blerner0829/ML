@@ -8,6 +8,7 @@
 #include <cmath>
 #include <set>
 #include <map>
+#include <regex>
 #include "csvstream.h"
 
 using namespace std;
@@ -34,6 +35,8 @@ class Classifier {
     
   public:
     Classifier () {}
+    
+
     map<string, map<string, string>> storeString(csvstream &file) {
       map<string, string> row;
       while (file >> row){
@@ -41,6 +44,7 @@ class Classifier {
       }
       return string_storage;
     }
+
 
     void clearMap() {
       string_storage.clear();
@@ -107,14 +111,16 @@ class Classifier {
         for (const auto& innerPair : outerPair.second) {
           string label = innerPair.first;
           string content = innerPair.second;
-          for (const auto& word : unique_word_set) {
-            if (content.find(word) != string::npos) {
+          for (const auto& wordPair : word_occur) {
+            const string& word = wordPair.first;
+            regex pattern("\\b" + word + "\\b");
+            if (regex_search(content, pattern)) {
               label_word_counts[label][word]++;
             }
           }
         }
       }
-    }
+  }
 
     double logPC(string label) {
       return log(label_occur[label] / static_cast<double>(numPosts));
@@ -122,7 +128,7 @@ class Classifier {
 
     double logPWC(string label, string word) {
       if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
-        return log(label_word_counts[label][word] / static_cast<double>(numPosts));
+        return log(label_word_counts[label][word] / static_cast<double>(label_occur[label]));
       }
       else if (word_occur.count(word)) {
         return log(word_occur[word] / static_cast<double>(numPosts));
@@ -174,9 +180,9 @@ class Classifier {
       cout << "classes:" << endl;
       for (const auto& pair : label_occur) {
         const std::string& label = pair.first;
-        cout << "  label = " << label;
+        cout << "  " << label;
         cout << ", " << pair.second << " examples";
-        cout << ",  log-prior = " << logPC(label) << endl;
+        cout << ", log-prior = " << logPC(label) << endl;
       }
 }
 
@@ -195,8 +201,10 @@ class Classifier {
         const string& label = labelPair.first;
         for (const auto& wordPair : word_occur) {
           const string& word = wordPair.first;
+          if (label_word_counts[label][word] > 0) {
             cout << "  " << label << ":" << word << ", count = " << label_word_counts[label][word];
             cout << ", log-likelihood = " << logPWC(label, word) << endl;
+          }
         }
       }
       cout << endl;
