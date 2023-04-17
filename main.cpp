@@ -25,9 +25,8 @@ set<string> unique_words(const string &str) {
 class Classifier {
   private:
     int numPosts = 0;
-    double logPCvar = 0;
-    double logPWCvar = 0;
     set<string> unique_word_set;
+    set<string> uniqueLabelsInString;
     map<string, int> word_occur;
     map<string, int> label_occur;
     map<string, map<string, int>> label_word_counts;
@@ -41,6 +40,10 @@ class Classifier {
         string_storage[row["n"]][row["tag"]] = row["content"];
       }
       return string_storage;
+    }
+
+    void clearMap() {
+      string_storage.clear();
     }
 
     int countPosts(map<string, map<string, string>> string_storage) {
@@ -88,7 +91,6 @@ class Classifier {
     }
 
     void labelOccurances(map<string, map<string, string>> string_storage) {
-      set<string> uniqueLabelsInString;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           string word = innerPair.first;
@@ -96,11 +98,16 @@ class Classifier {
         }
       }
 
-      for (const auto& uniqueLabel : unique_word_set) {
-        if (uniqueLabelsInString.count(uniqueLabel)) {
-          ++label_occur[uniqueLabel];
+      for (const auto& outerPair : string_storage) {
+        for (const auto& innerPair : outerPair.second) {
+            const string& innerFirst = innerPair.first;
+            for (const auto& label : uniqueLabelsInString) {
+                if (innerFirst == label) {
+                    ++label_occur[label];
+                }
+            }
         }
-      }
+    }
     }
 
     void wordAndLabel(map<string, map<string, string>> string_storage) {
@@ -117,36 +124,34 @@ class Classifier {
       }
     }
 
-    void logPC(string label) {
-      logPCvar = log(label_occur[label] / numPosts);
+    double logPC(string label) {
+      return log(label_occur[label] / static_cast<double>(numPosts));
     }
 
-    void logPWC(string label, string word) {
+    double logPWC(string label, string word) {
       if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
-        logPWCvar = log(label_word_counts[label][word] / numPosts);
+        return log(label_word_counts[label][word] / static_cast<double>(numPosts));
       }
       else if (word_occur.count(word)) {
-        logPWCvar = log(word_occur[word] / numPosts);
+        return log(word_occur[word] / static_cast<double>(numPosts));
       }
       else {
-        logPWCvar = log(1 / numPosts);
+        return log(1 / static_cast<double>(numPosts));
       }
     }
 
     pair<string, double> predict(string content) {
       map<string, double> label_prob;
-      for (const auto& label : unique_word_set) {
+      for (const auto& label : uniqueLabelsInString) {
         double prob = 0;
         for (const auto& word : unique_words(content)) {
-          logPWC(label, word);
-          prob += logPWCvar;
+          prob += logPWC(label, word);
         }
-        logPC(label);
-        prob += logPCvar;
+        prob += logPC(label);
         label_prob[label] = prob;
       }
       string highest_label = "";
-      double highest_prob = 0;
+      double highest_prob = -10000000;
       for (const auto& pair : label_prob) {
         if (pair.second > highest_prob) {
           highest_label = pair.first;
@@ -155,6 +160,8 @@ class Classifier {
       }
       return pair<string, double>(highest_label, highest_prob);
     }
+
+
 
     // https://eecs280staff.github.io/p5-ml/#example
     // for each, prints out labal and content
@@ -176,8 +183,7 @@ class Classifier {
       for (const auto& label : unique_word_set) {
         cout << "  label = " << label;
         cout << ", " << label_occur[label] << " examples";
-        logPC(label);
-        cout << ",  log-prior = " << logPCvar << endl;
+        cout << ",  log-prior = " << logPC(label) << endl;
         }
     }
     // https://eecs280staff.github.io/p5-ml/#example
@@ -195,8 +201,7 @@ class Classifier {
         for (const auto& word : unique_word_set) {
           if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
             cout << "  " << label << ":" << word << ", count = " << label_word_counts[label][word];
-            logPWC(label, word);
-            cout << ", log-likelihood = " << logPWCvar << endl;
+            cout << ", log-likelihood = " << logPWC(label, word) << endl;
           }
         }
       }
@@ -210,7 +215,7 @@ class Classifier {
         for (const auto& innerPair : outerPair.second) {
           cout << "  correct = " << innerPair.first;
           cout << ", predicted = " << predict(innerPair.second).first;
-          cout << ", prob = " << predict(innerPair.second).second << endl;
+          cout << ", log-probability score = " << predict(innerPair.second).second << endl;
           cout << "  content = " << innerPair.second << endl << endl;
           }
       }
@@ -239,7 +244,7 @@ int main(int argc, char* argv[]) {
   set<string> unique_word_set;
   int total_posts = 0;
   int total_unique_words = 0;
-  map<string, map<string, string>> string_storage;
+  map<string, map<string, string>> string_storage_main;
   cout.precision(3);
   if (((argc != 3) && (argc != 4)) || ((argc == 4) && (strcmp(argv[3], "--debug") != 0))) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
@@ -253,28 +258,30 @@ int main(int argc, char* argv[]) {
   csvstream testFile(argv[2]);
   Classifier train;
 
-  string_storage = train.storeString(trainFile);
-  total_posts = train.countPosts(string_storage);
-  total_unique_words = train.totalUniqueWords(string_storage, unique_word_set);
-  train.wordOccurances(string_storage);
-  train.labelOccurances(string_storage);
-  train.wordAndLabel(string_storage);
+  string_storage_main = train.storeString(trainFile);
+  total_posts = train.countPosts(string_storage_main);
+  total_unique_words = train.totalUniqueWords(string_storage_main, unique_word_set);
+  train.wordOccurances(string_storage_main);
+  train.labelOccurances(string_storage_main);
+  train.wordAndLabel(string_storage_main);
 
   //take the words from the post in the test file
   //iterate through the labels from the training set
   //for each label calculate a log score by adding the log of all the words together
   //store the first one as the greatest value and subsequently compare all following against the first
+  train.clearMap();
   map<string, map<string, string>> test_string_storage = train.storeString(testFile);
   if (isDebug) {
-    train.printTrainingData(string_storage); // if debug
+    train.printTrainingData(string_storage_main); // if debug
   }
-  cout << "trained on" << total_posts << "examples" << endl;
+  cout << "trained on " << total_posts << " examples" << endl << endl;
 
   if (isDebug) {
     cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
     train.printClasses(); // if debug
     train.printClassifierParamaters(); // if debug
   }
+
   train.printTestData(test_string_storage);
   train.printPerformance(test_string_storage);
 
