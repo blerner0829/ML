@@ -1,8 +1,7 @@
 // Project UID db1f506d06d84ab787baf250c265e24e
-
+// https://eecs280staff.github.io/p5-ml/#testing
 #include "BinarySearchTree.h"
 #include "unit_test_framework.h"
-
 
 TEST(test_empty_impl) {
     BinarySearchTree<int> bst;
@@ -11,8 +10,11 @@ TEST(test_empty_impl) {
     ASSERT_FALSE(bst.empty());
 }
 
+
 TEST(test_size_height_impl_basic) {
     BinarySearchTree<int> bst;
+    ASSERT_EQUAL(0, bst.size());
+    ASSERT_EQUAL(0, bst.height());
     for (int i = 0; i < 20; ++i) {
         bst.insert(i);
     }
@@ -62,6 +64,7 @@ TEST(test_find_impl_basic) {
     i1 = bst.end();
     ASSERT_EQUAL(i1, bst.find(30));
 }
+
 
 TEST(test_insert_impl_basic) {
     BinarySearchTree<int> bst;
@@ -123,7 +126,7 @@ TEST(test_traverse_order_impl_basic) {
     // 3, 5, 6, 10, 11, 12, 15 (expected output)
     bst.traverse_inorder(std::cout);
     std::cout << std::endl;
-
+    ASSERT_EQUAL(3, bst.height());
     // 10, 5, 3, 6, 12, 11, 15 (expected output)
     bst.traverse_preorder(std::cout);
     std::cout << std::endl;

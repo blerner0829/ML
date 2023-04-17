@@ -35,6 +35,7 @@ private:
   
 
   // A custom comparator
+/*
   class PairComp {
     public:
       bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
@@ -48,8 +49,16 @@ private:
         }
       }
   };
-      
-  
+*/
+
+
+  class PairComp {
+    public:
+      bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
+        return lhs.first < rhs.first;
+      }
+  };
+
   BinarySearchTree<Pair_type, PairComp> bst;
 
 public:
@@ -143,9 +152,7 @@ public:
   }
 */
   // Destructor
-  ~Map() {
-    bst.~BinarySearchTree();
-  }
+  ~Map() = default;
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const {
@@ -186,19 +193,8 @@ public:
   //           that element. This ensures the proper value-initialization is done.
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
+  // Implement a function using the RME above that encorporates the suggestion on Map_public_test.cpp lines 69-70.
 
-/*
-  Value_type& operator[](const Key_type& k){
-    Iterator it = find(k);
-
-    if (it != end()) {
-      return it->second;
-    }
-    std::pair<Iterator, bool> result = insert(make_pair({k, Value_type()}));
-
-    return result->second;
-  }
-*/
  Value_type& operator[](const Key_type& k) {
     Iterator it = find(k);
     if (it != end()) {
@@ -207,6 +203,19 @@ public:
     std::pair<Iterator, bool> result = insert({k, Value_type()});
     return result.first->second;
  }
+ /*
+ 
+  Value_type& operator[](const Key_type& k) {
+    Iterator it = find(k);
+    if (it != end()) {
+      return it->second;
+    }
+    std::pair<Iterator, bool> result = insert(make_pair(k, Value_type()));
+    return result.first->second;
+  }
+  */
+
+
   // MODIFIES: this
   // EFFECTS : Inserts the given element into this Map if the given key
   //           is not already contained in the Map. If the key is
