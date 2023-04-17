@@ -59,8 +59,9 @@ class Classifier {
       int total = 0;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
-            total += unique_words(innerPair.second).size();
-            unique_word_set.insert(unique_words(innerPair.second).begin(), unique_words(innerPair.second).end());
+          set<string> innerSet = unique_words(innerPair.second);
+          total += innerSet.size();
+          unique_word_set.insert(innerSet.begin(), innerSet.end());
         }
       }
       return total;
@@ -245,7 +246,7 @@ int main(int argc, char* argv[]) {
     return 1;
   };
   bool isDebug = false;
-  if (strcmp(argv[3], "--debug")) {
+  if ((argc == 4) && strcmp(argv[3], "--debug")) {
     isDebug = true;
   }
   csvstream trainFile(argv[1]);
