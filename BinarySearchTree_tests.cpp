@@ -84,6 +84,8 @@ TEST(test_destroy_nodes_impl_basic) {
     bst2 = bst1;
     ASSERT_EQUAL(15, bst2.size());
     ASSERT_EQUAL(15, bst2.height());
+    ASSERT_EQUAL(15, bst1.size());
+    ASSERT_EQUAL(15, bst1.height());
 }
 
 TEST(test_destroy_nodes_impl_empty) {
@@ -96,6 +98,21 @@ TEST(test_destroy_nodes_impl_empty) {
     ASSERT_EQUAL(0, bst2.height());
 }
 
+TEST(test_end_basic) {
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.end() == bst.end());
+    ASSERT_FALSE(bst.end() != bst.end());
+    ASSERT_TRUE(bst.end() == bst.begin());
+    ASSERT_FALSE(bst.end() != bst.begin());
+}
+
+TEST(test_begin_basic) {
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.begin() == bst.begin());
+    ASSERT_FALSE(bst.begin() != bst.begin());
+    ASSERT_TRUE(bst.begin() == bst.end());
+    ASSERT_FALSE(bst.begin() != bst.end());
+}
 
 TEST(test_dtor_empty) {
     BinarySearchTree<int> bst;
@@ -140,18 +157,15 @@ TEST(test_insert_impl_basic) {
     ASSERT_EQUAL(3, bst.height());
     ASSERT_EQUAL(7, bst.size());
 }
-/*
-TEST(test_insert_impl_duplicates) {
+
+TEST(test_insert_impl_empty) {
     BinarySearchTree<int> bst;
     bst.insert(10);
-    bst.insert(5);
-    bst.insert(12);
-    bst.insert(3);
-    bst.insert(6);
-    bst.insert(15);
-    bst.insert(11);
+    ASSERT_EQUAL(10, *bst.begin());
+    ASSERT_EQUAL(1, bst.size());
+    ASSERT_EQUAL(1, bst.height());
 }
-*/
+
 TEST(test_min_max_element_impl_basic) {
     BinarySearchTree<int> bst;
     // initialize bst with values [0, 3]
@@ -173,13 +187,6 @@ TEST(test_min_max_element_impl_empty) {
     BinarySearchTree<int> bst;
     ASSERT_TRUE(bst.min_element() == bst.end());
     ASSERT_TRUE(bst.max_element() == bst.end());
-    // how do I fix this segfault?
-    // a: you can't, it's a bug in the code
-    // what line in BinarySearchTree.h is the bug?
-    // what is the bug?
-    // a: the bug is that the code is not checking if the tree is empty
-
-
 }
 
 TEST(test_check_sorting_invariant_basic) {
