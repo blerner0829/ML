@@ -36,15 +36,29 @@ class Classifier {
   public:
     Classifier () {}
     
+    map<string, map<string, string>> storeString(csvstream& file) {
 
-    map<string, map<string, string>> storeString(csvstream &file) {
-      map<string, string> row;
-      while (file >> row){
-        string_storage[row["n"]][row["tag"]] = row["content"];
-      }
-      return string_storage;
+    // Read all data from file into vector of maps
+    vector<map<string, string>> data;
+    map<string, string> row;
+    while (file >> row) {
+        data.push_back(row);
     }
 
+    // Reverse the order of the n values in the vector
+    for (auto& row : data) {
+        int n = stoi(row["n"]);
+        n = data.size() - n + 1;
+        row["n"] = to_string(n);
+    }
+
+    // Create map of maps using the reversed vector
+    for (const auto& row : data) {
+        string_storage[row.at("n")][row.at("tag")] = row.at("content");
+    }
+
+    return string_storage;
+}
 
     void clearMap() {
       string_storage.clear();
@@ -159,9 +173,6 @@ class Classifier {
       return pair<string, double>(highest_label, highest_prob);
     }
 
-
-
-    // https://eecs280staff.github.io/p5-ml/#example
     // for each, prints out labal and content
     void printTrainingData(map<string, map<string, string>> string_storage) {
       cout << "training data:" << endl;
@@ -173,8 +184,8 @@ class Classifier {
       }
     }
 
-    // https://eecs280staff.github.io/p5-ml/#example
-    // print out each label, number of examples it was trained on, and the value for log-prior
+    // print out each label, number of examples it was trained on,
+    // and the value for log-prior
     // print all of these using a for loop to iterate through the labels
     void printClasses() {
       cout << "classes:" << endl;
@@ -186,10 +197,6 @@ class Classifier {
       }
 }
 
-    // https://eecs280staff.github.io/p5-ml/#example
-    //For each label, and for each word that occurs for that label: The number of posts with that label that contained the word, 
-    // and the log-likelihood of the word given the label.
-    // ex: 
     // classifier parameters:
     // calculator:assert, count = 1, log-likelihood = -1.1
     // calculator:big, count = 1, log-likelihood = -1.1
@@ -202,7 +209,8 @@ class Classifier {
         for (const auto& wordPair : word_occur) {
           const string& word = wordPair.first;
           if (label_word_counts[label][word] > 0) {
-            cout << "  " << label << ":" << word << ", count = " << label_word_counts[label][word];
+            cout << "  " << label << ":" << word << ", count = " 
+            << label_word_counts[label][word];
             cout << ", log-likelihood = " << logPWC(label, word) << endl;
           }
         }
@@ -210,17 +218,14 @@ class Classifier {
       cout << endl;
     }
 
-
-
-
-    // https://eecs280staff.github.io/p5-ml/#example
     void printTestData(map<string, map<string, string>> test_string_storage) {
       cout << "test data:" << endl;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           cout << "  correct = " << innerPair.first;
           cout << ", predicted = " << predict(innerPair.second).first;
-          cout << ", log-probability score = " << predict(innerPair.second).second << endl;
+          cout << ", log-probability score = " 
+               << predict(innerPair.second).second << endl;
           cout << "  content = " << innerPair.second << endl << endl;
           }
       }
@@ -229,7 +234,8 @@ class Classifier {
     // Print the number of correct predictions and total number of test posts.
     // ex:
     // performance: 2 / 3 posts predicted correctly
-    void printPerformance(map<string, map<string, string>> test_string_storage) {
+    void printPerformance(map<string, map<string, string>> 
+                          test_string_storage) {
       int correct = 0;
       int total = 0;
       for (const auto& outerPair : string_storage) {
@@ -240,7 +246,8 @@ class Classifier {
           total++;
           }
       }
-      cout << "performance: " << correct << " / " << total << " posts predicted correctly" << endl;
+      cout << "performance: " << correct << " / " << total 
+           << " posts predicted correctly" << endl;
     }
     
 };
@@ -250,8 +257,10 @@ int main(int argc, char* argv[]) {
   int total_posts = 0;
   int total_unique_words = 0;
   map<string, map<string, string>> string_storage_main;
+  map<string, map<string, string>> string_storage_test;
   cout.precision(3);
-  if (((argc != 3) && (argc != 4)) || ((argc == 4) && (strcmp(argv[3], "--debug") != 0))) {
+  if (((argc != 3) && (argc != 4)) || ((argc == 4) && 
+      (strcmp(argv[3], "--debug") != 0))) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
     return 1;
   };
@@ -270,15 +279,16 @@ int main(int argc, char* argv[]) {
   train.wordAndLabel(string_storage_main);
   total_unique_words = train.wordCounter();
 
-  //take the words from the post in the test file
-  //iterate through the labels from the training set
-  //for each label calculate a log score by adding the log of all the words together
-  //store the first one as the greatest value and subsequently compare all following against the first
-  train.clearMap();
-  map<string, map<string, string>> test_string_storage = train.storeString(testFile);
+  // take the words from the post in the test file
+  // iterate through the labels from the training set
+  // for each label calculate a log score by 
+  // adding the log of all the words together
+  // store the first one as the greatest value and
+  // subsequently compare all following against the first
   if (isDebug) {
     train.printTrainingData(string_storage_main); // if debug
   }
+  train.clearMap();
   cout << "trained on " << total_posts << " examples" << endl;
 
   if (isDebug) {
@@ -286,10 +296,7 @@ int main(int argc, char* argv[]) {
     train.printClasses(); // if debug
     train.printClassifierParamaters(); // if debug
   }
-
-  train.printTestData(test_string_storage);
-  train.printPerformance(test_string_storage);
-
-
-
+  string_storage_test = train.storeString(testFile);
+  train.printTestData(string_storage_test);
+  train.printPerformance(string_storage_test);
 }
