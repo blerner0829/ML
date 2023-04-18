@@ -2,6 +2,7 @@
 // https://eecs280staff.github.io/p5-ml/#testing
 #include "BinarySearchTree.h"
 #include "unit_test_framework.h"
+using namespace std;
 
 TEST(test_empty_impl) {
     BinarySearchTree<int> bst;
@@ -220,21 +221,27 @@ TEST(test_traverse_order_impl_basic) {
     bst.insert(15);
     bst.insert(11);
     // 3, 5, 6, 10, 11, 12, 15 (expected output)
-    bst.traverse_inorder(std::cout);
-    std::cout << std::endl;
-    ASSERT_EQUAL(3, bst.height());
+    ostringstream oss;
+
+    bst.traverse_inorder(oss);
+    string expected = "3 5 6 10 11 12 15 ";
+    ASSERT_EQUAL(expected, oss.str());
+    ostringstream oss2;
+    bst.traverse_preorder(oss2);
     // 10, 5, 3, 6, 12, 11, 15 (expected output)
-    bst.traverse_preorder(std::cout);
-    std::cout << std::endl;
+    expected = "10 5 3 6 12 11 15 ";
+    ASSERT_EQUAL(expected, oss2.str());
 }    
 
 TEST(test_traverse_order_impl_empty) {
     BinarySearchTree<int> bst;
-    bst.traverse_inorder(std::cout);
-    std::cout << std::endl;
+    ostringstream oss;
+    bst.traverse_inorder(oss);
+    string correct = "";
+    ASSERT_EQUAL(correct, oss.str());
     ASSERT_EQUAL(0, bst.height());
-    bst.traverse_preorder(std::cout);
-    std::cout << std::endl;
+    bst.traverse_preorder(oss);
+    ASSERT_EQUAL(correct, oss.str());
 }
 
 TEST(test_min_greater_impl_basic) {
