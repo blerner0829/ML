@@ -33,49 +33,6 @@ private:
   // See http://www.cplusplus.com/reference/utility/pair/
   using Pair_type = std::pair<Key_type, Value_type>;
   
-
-  // A custom comparator
-/*
-  class PairComp {
-    public:
-      bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
-        if (lhs.second < rhs.second) {
-          return true;
-        } else if (rhs.second < lhs.second) {
-          return false;
-        } else {
-          // If the keys are equal, compare the values
-          return lhs.second < rhs.second;
-        }
-      }
-  };
-*/
-
-// What do these specs say about the PairComp functor?
-// https://eecs280staff.github.io/p5-ml/#building-on-the-bst
-// The PairComp functor should compare the keys of the pairs, not the values.
-
-//Based on the information above, implement a PairComp functor that compares 
-//                                    the keys of the pairs, not the values.
-//You can use the PairComp functor from the BinarySearchTree public tests
-//                                                    as a starting point.
-//You can also use the PairComp functor from the Map public tests as a starting point.
-
-/*
-class PairComp {
-  private:
-    Key_compare key_comp;
-
-  public:
-    PairComp() : key_comp() {}
-
-    PairComp(Key_compare kc) : key_comp(kc) {}
-
-    bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
-      return Key_compare(lhs.first, rhs.first);
-    }
-};
-*/
 struct PairComp {
     Key_compare less;
     bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
@@ -106,15 +63,16 @@ public:
   //
   // NOTE: This Map should be represented using a BinarySearchTree that
   //       stores (key, value) pairs. See Pair_type above. You will
-  //       also need to define an appropriate comparator type (PairComp) for the
+  //       also need to define an appropriate comparator type (PairComp) 
+  //       for the
   //       BinarySearchTree to use in comparing elements, so that they
   //       are compared based on the key stored in the first member of
   //       the pair, rather than the built-in behavior that compares the
   //       both the key and the value stored in first/second of the pair.
 
   // Type alias for iterator type. It is sufficient to use the Iterator
-  // from BinarySearchTree<Pair_type> since it will yield elements of Pair_type
-  // in the appropriate order for the Map.
+  // from BinarySearchTree<Pair_type> since it will yield elements of
+  // Pair_type in the appropriate order for the Map.
   using Iterator = typename BinarySearchTree<Pair_type, PairComp>::Iterator;
 
   // You should add in a default constructor, destructor, copy
@@ -178,7 +136,8 @@ public:
   //
   // HINT:     In the case the key was not found, and you must insert a
   //           new element, use the expression {k, Value_type()} to create
-  //           that element. This ensures the proper value-initialization is done.
+  //           that element. This ensures the proper value-initialization
+  //           is done.
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
 

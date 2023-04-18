@@ -36,8 +36,10 @@ class BinarySearchTree {
 
   // INVARIANTS: All these invariants must hold for valid implementations
   // of BinarySearchTree. The invariants may also be considered as an implicit
-  // part of the REQUIRES clause for all member functions - your implementations
-  // of those functions may assume the invariants hold and depend on them. Your
+  // part of the REQUIRES clause for all member functions - your 
+  // implementations
+  // of those functions may assume the invariants hold and depend on them.
+  // our
   // implementations of member functions must also ensure the invariants hold
   // when they have finished executing.
   //
@@ -283,7 +285,8 @@ public:
     return Iterator(root, find_impl(root, query, less), less);
   }
 
-  // REQUIRES: The given item is not already contained in this BinarySearchTree
+  // REQUIRES: The given item is not already contained in this 
+  //           BinarySearchTree
   // MODIFIES: this BinarySearchTree
   // EFFECTS : Inserts the element k into this BinarySearchTree, maintaining
   //           the sorting invariant.
@@ -375,7 +378,8 @@ private:
     */
   }
 
-  // EFFECTS: Creates and returns a pointer to the root of a new node structure
+  // EFFECTS: Creates and returns a pointer to the root of a new node 
+  //          structure
   //          with the same elements and EXACTLY the same structure as the
   //          tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
@@ -386,7 +390,8 @@ private:
     return new Node(node->datum, copy_nodes_impl(node->left),
     copy_nodes_impl(node->right));
   }
-  // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
+  // EFFECTS: Frees the memory for all nodes used in the tree rooted at 
+  //          'node'.
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node) {
     if (!node) {
@@ -453,7 +458,8 @@ private:
   }
 
   // EFFECTS : Returns a pointer to the Node containing the minimum element
-  //           in the tree rooted at 'node' or a null pointer if the tree is empty.
+  //           in the tree rooted at 'node' or a null pointer if the tree is 
+  //           empty.
   // NOTE: This function must be tail recursive.
   // NOTE: This function is used in the implementation of the ++ operator for
   //       the iterator code that is provided for you.
@@ -473,7 +479,8 @@ private:
     }
   }
   // EFFECTS : Returns a pointer to the Node containing the maximum element
-  //           in the tree rooted at 'node' or a null pointer if the tree is empty.
+  //           in the tree rooted at 'node' or a null pointer if the tree is
+  //           empty.
   // NOTE: This function must be tail recursive.
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the largest element lives.
@@ -514,7 +521,8 @@ private:
     return left_ok && right_ok;
   }
 
-  // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
+  // EFFECTS : Traverses the tree rooted at 'node' using an in-order 
+  //           traversal,
   //           printing each element to os in turn. Each element is followed
   //           by a space (there will be an "extra" space at the end).
   //           If the tree is empty, nothing is printed.
@@ -535,7 +543,8 @@ private:
     }
   }
 
-  // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
+  // EFFECTS : Traverses the tree rooted at 'node' using a pre-order 
+  //           traversal,
   //           printing each element to os in turn. Each element is followed
   //           by a space (there will be an "extra" space at the end).
   //           If the tree is empty, nothing is printed.
