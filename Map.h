@@ -187,6 +187,8 @@ public:
     return *this;
   }
 */
+  // copy ctor
+  Map(const Map& other) : bst(other.bst) {}
   // Destructor
   ~Map() = default;
 
