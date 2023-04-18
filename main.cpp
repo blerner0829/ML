@@ -141,8 +141,10 @@ class Classifier {
     }
 
     double logPWC(string label, string word) {
-      if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
-        return log(label_word_counts[label][word] / static_cast<double>(label_occur[label]));
+      if (label_word_counts.count(label) && 
+          label_word_counts[label].count(word)) {
+        return log(label_word_counts[label][word] 
+                / static_cast<double>(label_occur[label]));
       }
       else if (word_occur.count(word)) {
         return log(word_occur[word] / static_cast<double>(numPosts));
@@ -179,7 +181,7 @@ class Classifier {
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           cout << "  label = " << innerPair.first;
-          cout << ",  content = " << innerPair.second << endl;
+          cout << ", content = " << innerPair.second << endl;
           }
       }
     }
@@ -292,7 +294,7 @@ int main(int argc, char* argv[]) {
   cout << "trained on " << total_posts << " examples" << endl;
 
   if (isDebug) {
-    cout << "vocabulary size = " << total_unique_words << endl << endl; // if debug
+    cout << "vocabulary size = " << total_unique_words << endl << endl;
     train.printClasses(); // if debug
     train.printClassifierParamaters(); // if debug
   }
