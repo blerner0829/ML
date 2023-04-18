@@ -123,74 +123,24 @@ public:
   // you should omit them. A user of the class must be able to create,
   // copy, assign, and destroy Maps.
 
+  // Default ctor
   Map() {
   }
-/*
-  // Copy constructor
-  Map(const Map &other)
-    : bst.root(copy_nodes_impl(other.bst.root)) {
 
-    }
-*/
-
-// copy ctor
-/*
-  Map(const Map &other) {
-    bst.BinarySearchTree(other);
-  }
-  */
-/*
-  Map(const Map &other) {
-    bst.root = copy_nodes_impl(other.bst.root);
-  }
-  */
-// assignment operator that Benny wrote
-/*
-  Map &operator=(const Map &other) {
-    if (this == &other) {
-      return *this;
-    }
-
-    bst(bst.begin());
-    bst.root = copy_nodes_impl(other.bst.root);
-    return *this;
-  }
-*/
-  Map& operator=(const Map &other) {
-  if (this != &other) {
-    bst = other.bst;
-  }
-  return *this;
-}
-// assignment operator that Josh wrote
-/*
-  Map &operator=(const BinarySearchTree<Pair_type, PairComp> &rhs) {
-    if (this == &rhs) {
-      return *this;
-    }
-    destroy_nodes_impl(bst.root);
-    bst.root = copy_nodes_impl(rhs.bst.root);
-    return *this;
-  }
-*/
-
-// another one not sure which works best
-  /*
-  // Assignment operator
-  Map &operator=(const BinarySearchTree<Pair_type, PairComp> &rhs) {
-    if (this == &rhs) {
-      return *this;
-    }
-
-    bst(bst.begin());
-    bst.root = copy_nodes_impl(rhs.bst.begin());
-    return *this;
-  }
-*/
   // copy ctor
   Map(const Map& other) : bst(other.bst) {}
-  // Destructor
+
+
+  // dtor
   ~Map() = default;
+
+  // copy assignment
+  Map& operator=(const Map &other) {
+    if (this != &other) {
+      bst = other.bst;
+    }
+    return *this;
+  }
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const {
@@ -231,8 +181,6 @@ public:
   //           that element. This ensures the proper value-initialization is done.
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
-  // Implement a function using the RME above that encorporates the suggestion 
-  //                                        on Map_public_test.cpp lines 69-70.
 
  Value_type& operator[](const Key_type& k) {
     Iterator it = find(k);
@@ -242,17 +190,6 @@ public:
     std::pair<Iterator, bool> result = insert({k, Value_type()});
     return result.first->second;
  }
- /*
- 
-  Value_type& operator[](const Key_type& k) {
-    Iterator it = find(k);
-    if (it != end()) {
-      return it->second;
-    }
-    std::pair<Iterator, bool> result = insert(make_pair(k, Value_type()));
-    return result.first->second;
-  }
-  */
 
 
   // MODIFIES: this
