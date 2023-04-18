@@ -51,11 +51,14 @@ private:
   };
 */
 
-// What do these specs say about the PairComp functor? https://eecs280staff.github.io/p5-ml/#building-on-the-bst
+// What do these specs say about the PairComp functor?
+// https://eecs280staff.github.io/p5-ml/#building-on-the-bst
 // The PairComp functor should compare the keys of the pairs, not the values.
 
-//Based on the information above, implement a PairComp functor that compares the keys of the pairs, not the values.
-//You can use the PairComp functor from the BinarySearchTree public tests as a starting point.
+//Based on the information above, implement a PairComp functor that compares 
+//                                    the keys of the pairs, not the values.
+//You can use the PairComp functor from the BinarySearchTree public tests
+//                                                    as a starting point.
 //You can also use the PairComp functor from the Map public tests as a starting point.
 
 /*
@@ -226,7 +229,8 @@ public:
   //           that element. This ensures the proper value-initialization is done.
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
-  // Implement a function using the RME above that encorporates the suggestion on Map_public_test.cpp lines 69-70.
+  // Implement a function using the RME above that encorporates the suggestion 
+  //                                        on Map_public_test.cpp lines 69-70.
 
  Value_type& operator[](const Key_type& k) {
     Iterator it = find(k);

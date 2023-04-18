@@ -51,6 +51,7 @@
         "variant": "cpp",
         "utility": "cpp",
         "set": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "regex": "cpp"
     }
 }

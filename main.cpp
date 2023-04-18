@@ -35,7 +35,6 @@ class Classifier {
     
   public:
     Classifier () {}
-    
 
     map<string, map<string, string>> storeString(csvstream &file) {
       map<string, string> row;
@@ -44,7 +43,6 @@ class Classifier {
       }
       return string_storage;
     }
-
 
     void clearMap() {
       string_storage.clear();
@@ -128,7 +126,8 @@ class Classifier {
 
     double logPWC(string label, string word) {
       if (label_word_counts.count(label) && label_word_counts[label].count(word)) {
-        return log(label_word_counts[label][word] / static_cast<double>(label_occur[label]));
+        return log(label_word_counts[label][word] / 
+                   static_cast<double>(label_occur[label]));
       }
       else if (word_occur.count(word)) {
         return log(word_occur[word] / static_cast<double>(numPosts));
@@ -174,7 +173,8 @@ class Classifier {
     }
 
     // https://eecs280staff.github.io/p5-ml/#example
-    // print out each label, number of examples it was trained on, and the value for log-prior
+    // print out each label, number of examples it was trained on,
+    //                                 and the value for log-prior
     // print all of these using a for loop to iterate through the labels
     void printClasses() {
       cout << "classes:" << endl;
@@ -187,7 +187,8 @@ class Classifier {
 }
 
     // https://eecs280staff.github.io/p5-ml/#example
-    //For each label, and for each word that occurs for that label: The number of posts with that label that contained the word, 
+    // For each label, and for each word that occurs for that label: 
+    // The number of posts with that label that contained the word, 
     // and the log-likelihood of the word given the label.
     // ex: 
     // classifier parameters:
@@ -220,8 +221,8 @@ class Classifier {
         for (const auto& innerPair : outerPair.second) {
           cout << "  correct = " << innerPair.first;
           cout << ", predicted = " << predict(innerPair.second).first;
-          cout << ", log-probability score = " << predict(innerPair.second).second << endl;
-          cout << "  content = " << innerPair.second << endl << endl;
+          cout << ", log-probability score = " << predict(innerPair.second).second;
+          cout << endl << "  content = " << innerPair.second << endl << endl;
           }
       }
     }
@@ -240,7 +241,8 @@ class Classifier {
           total++;
           }
       }
-      cout << "performance: " << correct << " / " << total << " posts predicted correctly" << endl;
+      cout << "performance: " << correct << " / " << total << " posts predicted correctly" 
+           << endl;
     }
     
 };
@@ -251,7 +253,8 @@ int main(int argc, char* argv[]) {
   int total_unique_words = 0;
   map<string, map<string, string>> string_storage_main;
   cout.precision(3);
-  if (((argc != 3) && (argc != 4)) || ((argc == 4) && (strcmp(argv[3], "--debug") != 0))) {
+  if (((argc != 3) && (argc != 4)) || ((argc == 4) &&
+               (strcmp(argv[3], "--debug") != 0))) {
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
     return 1;
   };
@@ -273,7 +276,8 @@ int main(int argc, char* argv[]) {
   //take the words from the post in the test file
   //iterate through the labels from the training set
   //for each label calculate a log score by adding the log of all the words together
-  //store the first one as the greatest value and subsequently compare all following against the first
+  //store the first one as the greatest value and subsequently compare all following
+  //                                                               against the first
   train.clearMap();
   map<string, map<string, string>> test_string_storage = train.storeString(testFile);
   if (isDebug) {
