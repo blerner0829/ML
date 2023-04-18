@@ -32,27 +32,17 @@ private:
   // value stored in a std::pair.
   // See http://www.cplusplus.com/reference/utility/pair/
   using Pair_type = std::pair<Key_type, Value_type>;
-  
-struct PairComp {
-    Key_compare less;
-    bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
-      return less(lhs.first, rhs.first);
-    }
-    bool operator()(const Pair_type& lhs, const Key_type& rhs) const {
-      return less(lhs.first, rhs);
-    }
-    bool operator()(const Key_type& lhs, const Pair_type& rhs) const {
-      return less(lhs, rhs.first);
-    }
-  };
-/*
+
   class PairComp {
+    private:
+      Key_compare less;
+
     public:
       bool operator()(const Pair_type& lhs, const Pair_type& rhs) const {
-        return lhs.first < rhs.first;
+        return less(lhs.first, rhs.first);
     }
   };
-*/
+
   BinarySearchTree<Pair_type, PairComp> bst;
 
 public:
