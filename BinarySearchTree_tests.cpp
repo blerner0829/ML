@@ -1,7 +1,7 @@
 // Project UID db1f506d06d84ab787baf250c265e24e
 // https://eecs280staff.github.io/p5-ml/#testing
-#include "BinarySearchTree.h"
-#include "unit_test_framework.h"
+#include "BinarySearchTree.hpp"
+#include "unit_test_framework.hpp"
 using namespace std;
 
 TEST(test_empty_impl) {

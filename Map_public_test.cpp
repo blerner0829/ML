@@ -1,10 +1,8 @@
-// Project UID db1f506d06d84ab787baf250c265e24e
-
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Map.h"
-#include "unit_test_framework.h"
+#include "Map.hpp"
+#include "unit_test_framework.hpp"
 
 using std::pair;
 using std::string;
@@ -26,7 +24,7 @@ TEST(map_public_test) {
   words.insert(tuple);
   ASSERT_EQUAL(words["world"], 2);
 
-  // Here's the C++11 way to insert a pair
+  // Here's the way to insert a pair with {} initialization syntax
   words.insert({"pi", 3.14159});
   ASSERT_ALMOST_EQUAL(words["pi"], 3.14159, 0.00001);
 
@@ -34,8 +32,8 @@ TEST(map_public_test) {
   vector<double> expected_values = { 1, 3.14159, 2 };
   vector<string> actual_keys;
   vector<double> actual_values;
-  // Iterate over map contents using a C++11 range-for loop
-  // This is the equivalent without C++11:
+  // Iterate over map contents using a range-for loop
+  // This is the equivalent using iterators directly:
   // for (Map<string, double>::Iterator it = words.begin();
   //      it != words.end(); ++it) {
   //   pair<string, double> &p = *it;

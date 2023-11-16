@@ -1,5 +1,5 @@
-#ifndef UNIT_TEST_FRAMEWORK_H
-#define UNIT_TEST_FRAMEWORK_H
+#ifndef UNIT_TEST_FRAMEWORK_HPP
+#define UNIT_TEST_FRAMEWORK_HPP
 
 #include <map>
 #include <utility>
@@ -16,6 +16,9 @@
 #include <algorithm>
 #include <exception>
 #include <stdexcept>
+#if UNIT_TEST_ENABLE_REGEXP
+#  include <regex>
+#endif
 
 // For compatibility with Visual Studio
 #include <ciso646>
@@ -542,6 +545,9 @@ int TestSuite::run_tests(int argc, char** argv) {
 std::vector<std::string> TestSuite::get_test_names_to_run(int argc,
                                                           char** argv) {
     std::vector<std::string> test_names_to_run;
+#if UNIT_TEST_ENABLE_REGEXP
+    bool regexp_matching = false;
+#endif
     for (auto i = 1; i < argc; ++i) {
         if (argv[i] == std::string("--show_test_names") or
             argv[i] == std::string("-n")) {
@@ -554,13 +560,26 @@ std::vector<std::string> TestSuite::get_test_names_to_run(int argc,
                  argv[i] == std::string("-q")) {
             TestSuite::get().enable_quiet_mode();
         }
+#if UNIT_TEST_ENABLE_REGEXP
+        else if (argv[i] == std::string("--regexp") or
+                 argv[i] == std::string("-e")) {
+          regexp_matching = true;
+        }
+#endif
         else if (argv[i] == std::string("--help") or
                  argv[i] == std::string("-h")) {
             std::cout << "usage: " << argv[0]
+#if UNIT_TEST_ENABLE_REGEXP
+                      << " [-h] [-e] [-n] [-q] [[TEST_NAME] ...]\n";
+#else
                       << " [-h] [-n] [-q] [[TEST_NAME] ...]\n";
+#endif
             std::cout
                 << "optional arguments:\n"
                 << " -h, --help\t\t show this help message and exit\n"
+#if UNIT_TEST_ENABLE_REGEXP
+                << " -e, --regexp\t\t treat TEST_NAME as a regular expression\n"
+#endif
                 << " -n, --show_test_names\t print the names of all "
                    "discovered test cases and exit\n"
                 << " -q, --quiet\t\t print a reduced summary of test results\n"
@@ -583,6 +602,25 @@ std::vector<std::string> TestSuite::get_test_names_to_run(int argc,
             std::back_inserter(test_names_to_run),
             [](const std::pair<std::string, TestCase>& p) { return p.first; });
     }
+#if UNIT_TEST_ENABLE_REGEXP
+    else if (regexp_matching) {
+        std::ostringstream pattern;
+        for (auto iter = test_names_to_run.begin();
+             iter != test_names_to_run.end(); ++iter) {
+            if (iter != test_names_to_run.begin()) {
+                pattern << "|";
+            }
+            pattern << "(" << *iter << ")";
+        }
+        std::regex name_regex{pattern.str()};
+        test_names_to_run.clear();
+        for (const auto& test_pair : tests_) {
+            if (std::regex_match(test_pair.first, name_regex)) {
+                test_names_to_run.push_back(test_pair.first);
+            }
+        }
+    }
+#endif
     return test_names_to_run;
 }
 
@@ -648,4 +686,4 @@ void assert_almost_equal(double first, double second, double precision,
     throw TestFailure(reason.str(), line_number, assertion_text);
 }
 
-#endif  // UNIT_TEST_FRAMEWORK_H
+#endif  // UNIT_TEST_FRAMEWORK_HPP

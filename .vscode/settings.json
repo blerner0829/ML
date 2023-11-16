@@ -52,6 +52,26 @@
         "utility": "cpp",
         "set": "cpp",
         "map": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "__hash_table": "cpp",
+        "__node_handle": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "array": "cpp",
+        "bit": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "deque": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "optional": "cpp",
+        "sstream": "cpp",
+        "stack": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "__functional_base": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp"
     }
 }

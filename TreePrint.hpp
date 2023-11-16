@@ -1,8 +1,4 @@
-/*
- * TreePrint.h
- *Project UID db1f506d06d84ab787baf250c265e24e
- * 
- */
+/* TreePrint.hpp */
 
 #include <iostream>
 #include <iomanip>

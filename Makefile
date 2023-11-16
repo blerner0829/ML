@@ -5,17 +5,21 @@
 CXX ?= g++
 
 # Compiler flags
-CXXFLAGS ?= --std=c++11 -Wall -Werror -pedantic -g -Wno-sign-compare -Wno-comment
+CXXFLAGS ?= --std=c++17 -Wall -Werror -pedantic -g -Wno-sign-compare -Wno-comment
 
 # Run a regression test
 test: BinarySearchTree_compile_check.exe \
 		BinarySearchTree_tests.exe \
 		BinarySearchTree_public_test.exe \
-		Map_compile_check.exe Map_public_test.exe main.exe
+		Map_compile_check.exe \
+		Map_tests.exe \
+		Map_public_test.exe \
+		main.exe
 
 	./BinarySearchTree_tests.exe
 	./BinarySearchTree_public_test.exe
 
+	./Map_tests.exe
 	./Map_public_test.exe
 
 	./main.exe train_small.csv test_small.csv --debug > test_small_debug.out.txt
@@ -33,13 +37,16 @@ test: BinarySearchTree_compile_check.exe \
 main.exe: main.cpp
 	$(CXX) $(CXXFLAGS) main.cpp -o $@
 
-BinarySearchTree_tests.exe: BinarySearchTree_tests.cpp BinarySearchTree.h
+BinarySearchTree_tests.exe: BinarySearchTree_tests.cpp BinarySearchTree.hpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-%_public_test.exe: %_public_test.cpp %.h
+Map_tests.exe: Map_tests.cpp Map.hpp BinarySearchTree.hpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
-%_compile_check.exe: %_compile_check.cpp %.h
+%_public_test.exe: %_public_test.cpp %.hpp
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+%_compile_check.exe: %_compile_check.cpp %.hpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 # disable built-in rules
@@ -53,7 +60,8 @@ clean :
 # Run style check tools
 CPD ?= /usr/um/pmd-6.0.1/bin/run.sh cpd
 OCLINT ?= /usr/um/oclint-0.13/bin/oclint
-FILES := BinarySearchTree.h BinarySearchTree_tests.cpp Map.h main.cpp
+FILES := BinarySearchTree.hpp BinarySearchTree_tests.cpp Map.hpp main.cpp
+CPD_FILES := BinarySearchTree.hpp Map.hpp main.cpp
 style :
 	$(OCLINT) \
     -no-analytics \
@@ -69,11 +77,11 @@ style :
     -max-priority-2 0 \
     -max-priority-3 0 \
     $(FILES) \
-    -- -xc++ --std=c++11
+    -- -xc++ --std=c++17
 	$(CPD) \
     --minimum-tokens 100 \
     --language cpp \
     --failOnViolation true \
-    --files $(FILES)
+    --files $(CPD_FILES)
 	@echo "########################################"
 	@echo "EECS 280 style checks PASS"

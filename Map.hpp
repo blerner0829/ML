@@ -1,7 +1,5 @@
-
-
-#ifndef MAP_H
-#define MAP_H
+#ifndef MAP_HPP
+#define MAP_HPP
 /* Map.h
  *
  * Abstract data type representing a map of key-value pairs with
@@ -18,7 +16,7 @@
  * DO NOT modify the public interface. Modify anything else you need to.
  */
 
-#include "BinarySearchTree.h"
+#include "BinarySearchTree.hpp"
 #include <cassert>  //assert
 #include <utility>  //pair
 

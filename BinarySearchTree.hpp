@@ -1,6 +1,6 @@
-#ifndef BINARY_SEARCH_TREE_H
-#define BINARY_SEARCH_TREE_H
-/* BinarySearchTree.h
+#ifndef BINARY_SEARCH_TREE_HPP
+#define BINARY_SEARCH_TREE_HPP
+/* BinarySearchTree.hpp
  *
  * Abstract data type representing a binary search tree
  * Project UID db1f506d06d84ab787baf250c265e24e
@@ -594,7 +594,7 @@ private:
 
 }; // END of BinarySearchTree class
 
-#include "TreePrint.h" // DO NOT REMOVE!!!
+#include "TreePrint.hpp" // DO NOT REMOVE!!!
 
 // MODIFIES: os
 // EFFECTS : Prints the elements in the tree to the given ostream,
