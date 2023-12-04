@@ -509,7 +509,9 @@ private:
 
      // Check the sorting invariant for the current node
     if ((node->left != nullptr && less(node->datum, node->left->datum)) ||
-        (node->right != nullptr && less(node->right->datum, node->datum))) {
+        (node->right != nullptr && less(node->right->datum, node->datum)) || 
+        (node->left != nullptr && node->right != nullptr && !less(node->left->datum, 
+        node->right->datum) && !less(node->right->datum, node->left->datum))) {
       return false;
     }
 
