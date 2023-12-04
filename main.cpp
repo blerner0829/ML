@@ -135,21 +135,30 @@ class Classifier {
     }
     }
 
-    void wordAndLabel(map<string, map<string, string>> string_storage) {
+    void wordAndLabel(const map<string, map<string, string>>& string_storage) {
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
-          string label = innerPair.first;
-          string content = innerPair.second;
-          for (const auto& wordPair : word_occur) {
-            const string& word = wordPair.first;
-            regex pattern("\\b" + word + "\\b");
-            if (regex_search(content, pattern)) {
-              label_word_counts[label][word]++;
+          const string& label = innerPair.first;
+          const string& content = innerPair.second;
+          // Tokenize content into words
+          istringstream iss(content);
+          string word;
+              
+          // Use a set to keep track of unique words in each content section
+          set<string> uniqueWordsInContent;
+
+          while (iss >> word) {
+          // Check if the word has already been encountered in this content section
+            if (!uniqueWordsInContent.count(word)) {
+              // Increment word count for the label
+              label_word_counts[label][word]++;      
+              // Add the word to the set to mark it as encountered
+              uniqueWordsInContent.insert(word);
             }
           }
         }
       }
-  }
+    }
 
     double logPC(string label) {
       return log(label_occur[label] / static_cast<double>(numPosts));
