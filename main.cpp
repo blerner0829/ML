@@ -29,51 +29,36 @@ class Classifier {
     map<string, int> word_occur;
     map<string, int> label_occur;
     map<string, map<string, int>> label_word_counts;
-    map<string, map<string, string>> string_storage;
+    map<int, map<string, string>> string_storage;
     
   public:
     Classifier () {}
     
-    map<string, map<string, string>> storeString(csvstream& file) {
+    #include "csvstream.hpp"  // Include the csvstream library
 
+map<int, map<string, string>> storeString(csvstream& file) {
     // Read all data from file into vector of maps
     vector<map<string, string>> data;
     map<string, string> row;
+
+    // Read CSV file and extract only "tag" and "content" columns
     while (file >> row) {
-        data.push_back(row);
+        map<string, string> filtered_row;
+        filtered_row["tag"] = row["tag"];
+        filtered_row["content"] = row["content"];
+        data.push_back(filtered_row);
     }
 
-    // Reverse the order of the n values in the vector
-    /*
-    for (auto& row : data) {
-        int n = stoi(row["n"]);
-        n = data.size() - n + 1;
-        row["n"] = to_string(n);
-    }
-  */
- /*
-    for (size_t i = 0; i < data.size(); i++) {
-      int n = stoi(data[i]["n"]);
-      n = data.size() - n + 1;
-      data[i]["n"] = to_string(n);
-    }
-    */
-   
-   for (auto& row : data) {
-        int n;
-        stringstream ss(row["n"]);
-        ss >> n;
-        n = data.size() - n + 1;
-        row["n"] = to_string(n);
-    } 
-    
-    // Create map of maps using the reversed vector
+    // Create map of maps using the filtered vector
+    int index = 1;  // Start index from 1
     for (const auto& row : data) {
-        string_storage[row.at("n")][row.at("tag")] = row.at("content");
+        string_storage[index][row.at("tag")] = row.at("content");
+        index++;  // Increment index for the next set of data
     }
 
     return string_storage;
 }
+
 
     void clearMap() {
       string_storage.clear();
@@ -83,19 +68,19 @@ class Classifier {
       return word_occur.size();
     }
 
-    int countPosts(map<string, map<string, string>> string_storage) {
-      string highest_n= "0";
+    int countPosts(map<int, map<string, string>> string_storage) {
+      int highest_n= 0;
       for (const auto& pair : string_storage) {
-        const string& n_value = pair.first;
+        const int& n_value = pair.first;
         if (n_value > highest_n) {
           highest_n = n_value;
         }
       }
-      numPosts = stoi(highest_n);
-      return stoi(highest_n);
+      numPosts = highest_n;
+      return highest_n;
     }
 
-    void wordOccurances(map<string, map<string, string>> string_storage) {
+    void wordOccurances(map<int, map<string, string>> string_storage) {
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           istringstream stream(innerPair.second);
@@ -115,7 +100,7 @@ class Classifier {
       }
     }
 
-    void labelOccurances(map<string, map<string, string>> string_storage) {
+    void labelOccurances(map<int, map<string, string>> string_storage) {
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           string word = innerPair.first;
@@ -135,7 +120,7 @@ class Classifier {
     }
     }
 
-    void wordAndLabel(const map<string, map<string, string>>& string_storage) {
+    void wordAndLabel(const map<int, map<string, string>>& string_storage) {
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
           const string& label = innerPair.first;
@@ -200,7 +185,7 @@ class Classifier {
     }
 
     // for each, prints out labal and content
-    void printTrainingData(map<string, map<string, string>> string_storage) {
+    void printTrainingData(map<int, map<string, string>> string_storage) {
       cout << "training data:" << endl;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
@@ -244,7 +229,7 @@ class Classifier {
       cout << endl;
     }
 
-    void printTestData(map<string, map<string, string>> test_string_storage) {
+    void printTestData(map<int, map<string, string>> test_string_storage) {
       cout << "test data:" << endl;
       for (const auto& outerPair : string_storage) {
         for (const auto& innerPair : outerPair.second) {
@@ -260,7 +245,7 @@ class Classifier {
     // Print the number of correct predictions and total number of test posts.
     // ex:
     // performance: 2 / 3 posts predicted correctly
-    void printPerformance(map<string, map<string, string>> 
+    void printPerformance(map<int, map<string, string>> 
                           test_string_storage) {
       int correct = 0;
       int total = 0;
@@ -282,8 +267,8 @@ int main(int argc, char* argv[]) {
   set<string> unique_word_set;
   int total_posts = 0;
   int total_unique_words = 0;
-  map<string, map<string, string>> string_storage_main;
-  map<string, map<string, string>> string_storage_test;
+  map<int, map<string, string>> string_storage_main;
+  map<int, map<string, string>> string_storage_test;
   cout.precision(3);
   if (((argc != 3) && (argc != 4)) || ((argc == 4) && 
       (strcmp(argv[3], "--debug") != 0))) {
